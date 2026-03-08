@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 390">
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: bold; fill: #1a1a1a; }
+    .subtitle { font-size: 13px; fill: #555; }
+    .step-label { font-size: 14px; font-weight: bold; fill: #333; }
+    .value { font-size: 13px; font-weight: bold; fill: #fff; }
+    .value-lg { font-size: 20px; font-weight: bold; fill: #fff; }
+    .label { font-size: 13px; fill: #333; }
+    .label-bold { font-size: 13px; font-weight: bold; fill: #333; }
+    .code { font-size: 12px; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .note { font-size: 11px; fill: #777; font-style: italic; }
+    .empty-label { font-size: 11px; fill: #999; font-style: italic; }
+    .bucket-idx { font-size: 11px; font-weight: bold; fill: #333; font-family: 'Consolas', monospace; }
+  </style>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="400" y="28" text-anchor="middle" class="title">What Is a Hash Table?</text>
+  <text x="400" y="48" text-anchor="middle" class="subtitle">A data structure that stores key-value pairs and provides fast lookup by key &#x2014; ideally O(1)</text>
+
+  <!-- ==================== Pipeline flow ==================== -->
+
+  <!-- Key box (blue) -->
+  <rect x="30" y="82" width="75" height="36" rx="5" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+  <text x="67" y="105" text-anchor="middle" class="value">"Alice"</text>
+  <text x="67" y="130" text-anchor="middle" class="label">key</text>
+
+  <!-- Arrow to hash function -->
+  <line x1="105" y1="100" x2="162" y2="100" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Hash function box (purple) -->
+  <rect x="167" y="76" width="148" height="48" rx="5" fill="#9b59b6" stroke="#8e44ad" stroke-width="2"/>
+  <text x="241" y="97" text-anchor="middle" class="value">Hash Function</text>
+  <text x="241" y="115" text-anchor="middle" style="font-size: 11px; fill: #ddd; font-style: italic;">multiply-and-add</text>
+
+  <!-- Arrow from hash to index circle -->
+  <line x1="315" y1="100" x2="368" y2="100" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Index result (orange circle) -->
+  <circle cx="395" cy="100" r="22" fill="#f39c12" stroke="#e67e22" stroke-width="2"/>
+  <text x="395" y="108" text-anchor="middle" class="value-lg">3</text>
+
+  <!-- Arrow down to array -->
+  <line x1="395" y1="122" x2="395" y2="176" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="412" y="152" style="font-size: 12px; font-weight: bold; fill: #e74c3c;">index 3</text>
+
+  <!-- ==================== Hash function callout ==================== -->
+  <rect x="462" y="66" width="310" height="106" rx="8" fill="#f4f6f7" stroke="#bdc3c7" stroke-width="1.5"/>
+
+  <text x="475" y="86" class="step-label">We use multiply-and-add</text>
+  <text x="475" y="102" class="note">(many others exist: djb2, FNV, std::hash...)</text>
+
+  <line x1="475" y1="110" x2="758" y2="110" stroke="#ddd" stroke-width="1"/>
+
+  <text x="475" y="128" class="label-bold">Two guarantees:</text>
+  <text x="475" y="148" class="label">&#x2022; Deterministic &#x2014; same key &#x2192; same index</text>
+  <text x="475" y="165" class="label">&#x2022; Uniform &#x2014; keys spread evenly across slots</text>
+
+  <!-- ==================== Horizontal array ==================== -->
+
+  <!-- [0] empty -->
+  <rect x="80" y="178" width="90" height="40" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
+  <text x="125" y="203" text-anchor="middle" class="empty-label">empty</text>
+  <text x="125" y="233" text-anchor="middle" class="bucket-idx">[0]</text>
+
+  <!-- [1] empty -->
+  <rect x="170" y="178" width="90" height="40" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
+  <text x="215" y="203" text-anchor="middle" class="empty-label">empty</text>
+  <text x="215" y="233" text-anchor="middle" class="bucket-idx">[1]</text>
+
+  <!-- [2] Charlie: 91 -->
+  <rect x="260" y="178" width="57" height="40" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="317" y="178" width="33" height="40" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="288" y="203" text-anchor="middle" style="font-size: 10px; font-weight: bold; fill: #fff;">Charlie</text>
+  <text x="333" y="203" text-anchor="middle" class="value">91</text>
+  <text x="305" y="233" text-anchor="middle" class="bucket-idx">[2]</text>
+
+  <!-- [3] Alice: 95 — HIGHLIGHTED (arrow points here) -->
+  <rect x="350" y="178" width="57" height="40" rx="3" fill="#3498db" stroke="#e74c3c" stroke-width="2.5"/>
+  <rect x="407" y="178" width="33" height="40" rx="3" fill="#2ecc71" stroke="#e74c3c" stroke-width="2.5"/>
+  <text x="378" y="203" text-anchor="middle" style="font-size: 10px; font-weight: bold; fill: #fff;">Alice</text>
+  <text x="423" y="203" text-anchor="middle" class="value">95</text>
+  <text x="395" y="233" text-anchor="middle" class="bucket-idx">[3]</text>
+
+  <!-- [4] empty -->
+  <rect x="440" y="178" width="90" height="40" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
+  <text x="485" y="203" text-anchor="middle" class="empty-label">empty</text>
+  <text x="485" y="233" text-anchor="middle" class="bucket-idx">[4]</text>
+
+  <!-- [5] Bob: 82 -->
+  <rect x="530" y="178" width="57" height="40" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="587" y="178" width="33" height="40" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="558" y="203" text-anchor="middle" style="font-size: 10px; font-weight: bold; fill: #fff;">Bob</text>
+  <text x="603" y="203" text-anchor="middle" class="value">82</text>
+  <text x="575" y="233" text-anchor="middle" class="bucket-idx">[5]</text>
+
+  <!-- [6] empty -->
+  <rect x="620" y="178" width="90" height="40" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
+  <text x="665" y="203" text-anchor="middle" class="empty-label">empty</text>
+  <text x="665" y="233" text-anchor="middle" class="bucket-idx">[6]</text>
+
+  <!-- ==================== Bottom insight ==================== -->
+  <line x1="30" y1="255" x2="770" y2="255" stroke="#ddd" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <text x="30" y="280" class="step-label">The key insight:</text>
+  <text x="30" y="303" class="label">Without a hash table: search every entry to find &#x201c;Alice&#x201d; &#x2014; O(n)</text>
+  <text x="30" y="323" class="label">With a hash table: hash(&#x201c;Alice&#x201d;) &#x2192; slot 3 &#x2192; go directly &#x2014; O(1)</text>
+
+  <line x1="30" y1="342" x2="770" y2="342" stroke="#ddd" stroke-width="1"/>
+
+  <text x="400" y="365" text-anchor="middle" class="note">Arrays give O(1) access by index. Hash tables give O(1) access by key, using a hash function to convert keys into indices.</text>
+  <text x="400" y="383" text-anchor="middle" class="note">The only complication: collisions &#x2014; when two keys hash to the same index. Chaining and probing handle that.</text>
+</svg>

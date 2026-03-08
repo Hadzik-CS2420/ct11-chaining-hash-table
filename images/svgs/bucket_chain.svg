@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 318">
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: bold; fill: #1a1a1a; }
+    .subtitle { font-size: 13px; fill: #555; }
+    .step-label { font-size: 14px; font-weight: bold; fill: #333; }
+    .value { font-size: 13px; font-weight: bold; fill: #fff; }
+    .value-sm { font-size: 11px; font-weight: bold; fill: #fff; }
+    .field-label { font-size: 10px; font-weight: bold; fill: #fff; }
+    .label { font-size: 13px; fill: #333; }
+    .label-bold { font-size: 13px; font-weight: bold; fill: #333; }
+    .code { font-size: 12px; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .note { font-size: 11px; fill: #777; font-style: italic; }
+    .empty-label { font-size: 12px; fill: #999; font-style: italic; }
+    .bucket-idx { font-size: 13px; font-weight: bold; fill: #333; font-family: 'Consolas', monospace; }
+  </style>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#bdc3c7"/>
+    </marker>
+  </defs>
+
+  <text x="400" y="28" text-anchor="middle" class="title">One Bucket = One Linked List</text>
+  <text x="400" y="48" text-anchor="middle" class="subtitle">Each bucket in the hash table is just a singly linked list of ChainNodes</text>
+  <text x="400" y="64" text-anchor="middle" class="subtitle">(Preview: Alice and Diana both hash to bucket 4 — shown in the next diagram)</text>
+
+  <!-- ==================== Bucket pointer ==================== -->
+  <text x="30" y="113" class="step-label">Bucket pointer:</text>
+  <text x="30" y="133" class="code">buckets_[4]</text>
+  <text x="30" y="151" class="note">type: ChainNode*</text>
+
+  <!-- Bucket box -->
+  <rect x="40" y="166" width="80" height="45" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="2"/>
+  <text x="20" y="193" text-anchor="middle" class="bucket-idx">[4]</text>
+  <text x="80" y="193" text-anchor="middle" class="value">&#x2192;</text>
+
+  <!-- Arrow from bucket to Diana -->
+  <line x1="120" y1="188" x2="178" y2="188" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ==================== Diana node ==================== -->
+  <rect x="180" y="168" width="110" height="42" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+  <rect x="290" y="168" width="50" height="42" rx="4" fill="#2ecc71" stroke="#27ae60" stroke-width="2"/>
+  <rect x="340" y="168" width="50" height="42" rx="4" fill="#f39c12" stroke="#e67e22" stroke-width="2"/>
+  <text x="235" y="186" text-anchor="middle" class="field-label">key</text>
+  <text x="235" y="201" text-anchor="middle" class="value">Diana</text>
+  <text x="315" y="186" text-anchor="middle" class="field-label">value</text>
+  <text x="315" y="201" text-anchor="middle" class="value">78</text>
+  <text x="365" y="186" text-anchor="middle" class="field-label">next</text>
+  <text x="365" y="202" text-anchor="middle" class="value-sm">&#x2192;</text>
+
+  <!-- Arrow from Diana to Alice -->
+  <line x1="390" y1="188" x2="438" y2="188" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ==================== Alice node ==================== -->
+  <rect x="440" y="168" width="110" height="42" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+  <rect x="550" y="168" width="50" height="42" rx="4" fill="#2ecc71" stroke="#27ae60" stroke-width="2"/>
+  <rect x="600" y="168" width="50" height="42" rx="4" fill="#f39c12" stroke="#e67e22" stroke-width="2"/>
+  <text x="495" y="186" text-anchor="middle" class="field-label">key</text>
+  <text x="495" y="201" text-anchor="middle" class="value">Alice</text>
+  <text x="575" y="186" text-anchor="middle" class="field-label">value</text>
+  <text x="575" y="201" text-anchor="middle" class="value">95</text>
+  <text x="625" y="186" text-anchor="middle" class="field-label">next</text>
+  <text x="625" y="202" text-anchor="middle" class="value-sm">&#x2192;</text>
+
+  <!-- Arrow from Alice to nullptr -->
+  <line x1="650" y1="188" x2="690" y2="188" stroke="#bdc3c7" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+  <text x="720" y="193" class="empty-label">nullptr</text>
+
+  <!-- ==================== Annotations ==================== -->
+  <line x1="40" y1="233" x2="760" y2="233" stroke="#ddd" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <text x="30" y="260" class="step-label">This is a singly linked list — same as the previous module:</text>
+  <text x="30" y="282" class="note">- buckets_[4] is the head pointer (like head_ in SinglyLinkedList)</text>
+  <text x="30" y="298" class="note">- Diana was inserted second, but prepend puts her first (like push_front)</text>
+  <text x="30" y="314" class="note">- Alice's next is nullptr — she's the last node (like the tail of a linked list)</text>
+</svg>

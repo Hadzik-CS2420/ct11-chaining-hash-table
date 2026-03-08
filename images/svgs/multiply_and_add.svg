@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440">
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: bold; fill: #1a1a1a; }
+    .subtitle { font-size: 13px; fill: #555; }
+    .step-label { font-size: 14px; font-weight: bold; fill: #333; }
+    .value { font-size: 13px; font-weight: bold; fill: #fff; }
+    .value-lg { font-size: 20px; font-weight: bold; fill: #fff; }
+    .label { font-size: 13px; fill: #333; }
+    .label-bold { font-size: 13px; font-weight: bold; fill: #333; }
+    .code { font-size: 12px; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .note { font-size: 11px; fill: #777; font-style: italic; }
+  </style>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="400" y="28" text-anchor="middle" class="title">Hash Function: Multiply-and-Add</text>
+  <text x="400" y="48" text-anchor="middle" class="subtitle">Convert any string key into an array index &#x2014; two steps</text>
+
+  <!-- ==================== Formula box (purple) ==================== -->
+  <rect x="30" y="64" width="740" height="52" rx="6" fill="#9b59b6" stroke="#8e44ad" stroke-width="2"/>
+  <text x="400" y="87" text-anchor="middle" style="font-size: 14px; fill: #fff; font-family: 'Consolas', monospace;">for each char c:   hash = hash &#xd7; 31 + c</text>
+  <text x="400" y="107" text-anchor="middle" style="font-size: 12px; fill: #ddd; font-family: 'Consolas', monospace;">then:   index = hash % capacity</text>
+
+  <!-- ==================== Trace section ==================== -->
+  <text x="30" y="145" class="step-label">Step 1: multiply-and-add &#x2014; tracing hash(&#x201c;Bob&#x201d;)</text>
+
+  <!-- Column headers -->
+  <text x="60" y="172" text-anchor="middle" class="label-bold">char</text>
+  <text x="140" y="172" text-anchor="middle" class="label-bold">ASCII</text>
+  <text x="380" y="172" text-anchor="middle" class="label-bold">calculation</text>
+  <text x="640" y="172" text-anchor="middle" class="label-bold">hash</text>
+  <line x1="30" y1="179" x2="770" y2="179" stroke="#bdc3c7" stroke-width="1"/>
+
+  <!-- Start row -->
+  <text x="60" y="202" text-anchor="middle" class="note">&#x2014;</text>
+  <text x="140" y="202" text-anchor="middle" class="note">&#x2014;</text>
+  <text x="380" y="202" text-anchor="middle" class="note">(initial value)</text>
+  <rect x="600" y="188" width="80" height="24" rx="4" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
+  <text x="640" y="205" text-anchor="middle" class="code">0</text>
+
+  <!-- Row 1: 'B' -->
+  <rect x="40" y="220" width="40" height="26" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="60" y="238" text-anchor="middle" class="value">&#x2018;B&#x2019;</text>
+  <text x="140" y="238" text-anchor="middle" class="code">66</text>
+  <text x="380" y="238" text-anchor="middle" class="code">0 &#xd7; 31 + 66</text>
+  <rect x="600" y="223" width="80" height="24" rx="4" fill="#f39c12" stroke="#e67e22" stroke-width="1.5"/>
+  <text x="640" y="240" text-anchor="middle" style="font-size: 12px; font-weight: bold; fill: #fff; font-family: 'Consolas', monospace;">66</text>
+
+  <!-- Row 2: 'o' -->
+  <rect x="40" y="255" width="40" height="26" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="60" y="273" text-anchor="middle" class="value">&#x2018;o&#x2019;</text>
+  <text x="140" y="273" text-anchor="middle" class="code">111</text>
+  <text x="380" y="273" text-anchor="middle" class="code">66 &#xd7; 31 + 111</text>
+  <rect x="600" y="258" width="80" height="24" rx="4" fill="#f39c12" stroke="#e67e22" stroke-width="1.5"/>
+  <text x="640" y="275" text-anchor="middle" style="font-size: 12px; font-weight: bold; fill: #fff; font-family: 'Consolas', monospace;">2,157</text>
+
+  <!-- Row 3: 'b' (final — red highlight) -->
+  <rect x="40" y="290" width="40" height="26" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="60" y="308" text-anchor="middle" class="value">&#x2018;b&#x2019;</text>
+  <text x="140" y="308" text-anchor="middle" class="code">98</text>
+  <text x="380" y="308" text-anchor="middle" class="code">2,157 &#xd7; 31 + 98</text>
+  <rect x="600" y="293" width="80" height="24" rx="4" fill="#e74c3c" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="640" y="310" text-anchor="middle" style="font-size: 12px; font-weight: bold; fill: #fff; font-family: 'Consolas', monospace;">66,965</text>
+
+  <!-- ==================== Step 2: Modulo ==================== -->
+  <line x1="30" y1="330" x2="770" y2="330" stroke="#ddd" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <text x="30" y="355" class="step-label">Step 2: modulo &#x2014; map into a valid index</text>
+
+  <text x="30" y="385" class="code">66,965 % 7 = 3</text>
+  <text x="30" y="402" class="note">(7 = capacity_ &#x2014; the number of buckets)</text>
+
+  <line x1="162" y1="380" x2="208" y2="380" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <circle cx="236" cy="380" r="20" fill="#2ecc71" stroke="#27ae60" stroke-width="2"/>
+  <text x="236" y="387" text-anchor="middle" class="value-lg">3</text>
+  <text x="275" y="387" class="label-bold">&#x2190; index</text>
+
+  <!-- Callout: why these choices? -->
+  <rect x="390" y="340" width="380" height="56" rx="8" fill="#f4f6f7" stroke="#bdc3c7" stroke-width="1.5"/>
+  <text x="405" y="361" class="label">&#x2022; Why 31? Prime, and x &#xd7; 31 = (x &lt;&lt; 5) &#x2212; x (fast)</text>
+  <text x="405" y="381" class="label">&#x2022; Why prime capacity? No shared factors &#x2192; even spread</text>
+
+  <!-- ==================== Bottom note ==================== -->
+  <line x1="30" y1="410" x2="770" y2="410" stroke="#ddd" stroke-width="1"/>
+
+  <text x="400" y="432" text-anchor="middle" class="note">Each character shifts the accumulated hash left (&#xd7; 31) then adds itself &#x2014; so every character influences the final result.</text>
+</svg>
