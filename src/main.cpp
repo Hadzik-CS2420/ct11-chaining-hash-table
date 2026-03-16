@@ -1,5 +1,5 @@
 // =============================================================================
-// CT10: Hash Tables — Grade Book System (Chaining)
+// CT10: Chaining Hash Table — Grade Book System
 // =============================================================================
 //
 // - Scenario: a professor manages student grades using a chaining hash table

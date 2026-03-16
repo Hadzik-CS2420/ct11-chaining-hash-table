@@ -6,7 +6,7 @@
 // - Student names are the KEYS, integer grades are the VALUES
 // - When two names hash to the same bucket, the entries form a
 //   linked-list chain at that index
-// - This file contains TODOs 1-8 for the chaining portion of CT10
+// - This file contains TODOs 1-9 for CT10
 //
 
 #include "ChainingHashTable.h"

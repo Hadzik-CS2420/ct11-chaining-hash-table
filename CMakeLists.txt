@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(ct10-hash-tables LANGUAGES CXX)
+project(ct10-chaining-hash-table LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
