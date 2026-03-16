@@ -1,0 +1,263 @@
+name: Autograding Tests
+on:
+  - push
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Project
+      continue-on-error: true
+      run: |
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        cmake --build build --config Release
+
+    - name: Build Check (2 points)
+      id: build
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Build Check (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            echo "Build successful"
+          else
+            echo "Build failed" && exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    # ==================== Hash Function Tests (4 points) ====================
+
+    - name: Hash Consistent Results (2 points)
+      id: hash-consistent
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Hash Consistent Results (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=HashFunction.ConsistentResults
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    - name: Hash Within Range (2 points)
+      id: hash-range
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Hash Within Range (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=HashFunction.WithinRange
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    # ==================== Insert Tests (6 points) ====================
+
+    - name: Insert Basic (2 points)
+      id: insert-basic
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Insert Basic (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingInsert.BasicInsert
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    - name: Insert Update Existing Key (2 points)
+      id: insert-update
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Insert Update Existing Key (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingInsert.UpdateExistingKey
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    - name: Insert Handles Collisions (2 points)
+      id: insert-collisions
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Insert Handles Collisions (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingInsert.HandlesCollisions
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    # ==================== Search Tests (6 points) ====================
+
+    - name: Search Finds Existing Key (2 points)
+      id: search-finds
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Search Finds Existing Key (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingSearch.FindsExistingKey
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    - name: Search Returns Null For Missing (2 points)
+      id: search-missing
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Search Returns Null For Missing (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingSearch.ReturnsNullForMissing
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    - name: Search Empty Table (2 points)
+      id: search-empty
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Search Empty Table (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingSearch.EmptyTable
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    # ==================== Remove Tests (6 points) ====================
+
+    - name: Remove Existing Key (2 points)
+      id: remove-existing
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Remove Existing Key (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingRemove.RemovesExistingKey
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    - name: Remove Returns False For Missing (2 points)
+      id: remove-missing
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Remove Returns False For Missing (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingRemove.ReturnsFalseForMissing
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    - name: Remove From Collision Chain (2 points)
+      id: remove-collision
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Remove From Collision Chain (2 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingRemove.RemoveFromCollisionChain
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 2
+
+    # ==================== Resize Tests (6 points) ====================
+
+    - name: Resize Triggers On High Load Factor (3 points)
+      id: resize-triggers
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Resize Triggers On High Load Factor (3 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingResize.TriggersOnHighLoadFactor
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 3
+
+    - name: Resize All Entries Survive (3 points)
+      id: resize-survive
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Resize All Entries Survive (3 points)
+        setup-command: ''
+        command: |
+          if [ -f build/run_tests ]; then
+            cd build && ./run_tests --gtest_filter=ChainingResize.AllEntriesSurvive
+          else
+            exit 1
+          fi
+        timeout: 10
+        max-score: 3
+
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        BUILD_RESULTS:              "${{steps.build.outputs.result}}"
+        HASH-CONSISTENT_RESULTS:    "${{steps.hash-consistent.outputs.result}}"
+        HASH-RANGE_RESULTS:         "${{steps.hash-range.outputs.result}}"
+        INSERT-BASIC_RESULTS:       "${{steps.insert-basic.outputs.result}}"
+        INSERT-UPDATE_RESULTS:      "${{steps.insert-update.outputs.result}}"
+        INSERT-COLLISIONS_RESULTS:  "${{steps.insert-collisions.outputs.result}}"
+        SEARCH-FINDS_RESULTS:       "${{steps.search-finds.outputs.result}}"
+        SEARCH-MISSING_RESULTS:     "${{steps.search-missing.outputs.result}}"
+        SEARCH-EMPTY_RESULTS:       "${{steps.search-empty.outputs.result}}"
+        REMOVE-EXISTING_RESULTS:    "${{steps.remove-existing.outputs.result}}"
+        REMOVE-MISSING_RESULTS:     "${{steps.remove-missing.outputs.result}}"
+        REMOVE-COLLISION_RESULTS:   "${{steps.remove-collision.outputs.result}}"
+        RESIZE-TRIGGERS_RESULTS:    "${{steps.resize-triggers.outputs.result}}"
+        RESIZE-SURVIVE_RESULTS:     "${{steps.resize-survive.outputs.result}}"
+      with:
+        runners: build,hash-consistent,hash-range,insert-basic,insert-update,insert-collisions,search-finds,search-missing,search-empty,remove-existing,remove-missing,remove-collision,resize-triggers,resize-survive
