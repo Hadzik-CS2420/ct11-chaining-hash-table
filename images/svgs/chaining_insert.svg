@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 535">
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: bold; fill: #1a1a1a; }
+    .subtitle { font-size: 13px; fill: #555; }
+    .section-title { font-size: 15px; font-weight: bold; fill: #333; }
+    .bucket-idx { font-size: 12px; font-weight: bold; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .value { font-size: 11px; font-weight: bold; fill: #fff; }
+    .value-lg { font-size: 12px; font-weight: bold; fill: #fff; }
+    .empty-label { font-size: 11px; fill: #999; font-style: italic; }
+    .label { font-size: 12px; fill: #333; }
+    .label-bold { font-size: 12px; font-weight: bold; fill: #333; }
+    .label-blue { font-size: 13px; font-weight: bold; fill: #2980b9; }
+    .label-green { font-size: 13px; font-weight: bold; fill: #27ae60; }
+    .code { font-size: 11px; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .note { font-size: 11px; fill: #777; font-style: italic; }
+    .hash-note { font-size: 11px; fill: #8e44ad; font-family: 'Consolas', monospace; }
+    .step-num { font-size: 14px; font-weight: bold; fill: #fff; }
+    .new-node { font-size: 11px; font-weight: bold; fill: #27ae60; }
+  </style>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#e74c3c"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bdc3c7"/>
+    </marker>
+    <marker id="arr-grn" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#27ae60"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2980b9"/>
+    </marker>
+  </defs>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="960" height="52" fill="#eaf2f8"/>
+  <text x="480" y="22" text-anchor="middle" class="title">insert() &#x2014; Two Cases: Update or Prepend</text>
+  <text x="480" y="42" text-anchor="middle" class="subtitle">Hash the key to find the bucket, walk the chain, then update an existing node or prepend a new one</text>
+
+  <!-- ==================== CASE 1: Update (left side) ==================== -->
+  <rect x="15" y="62" width="455" height="400" rx="8" fill="#eaf2f8" stroke="#2980b9" stroke-width="1.5"/>
+
+  <text x="35" y="86" class="label-blue">Case 1: Key found &#x2014; update existing value</text>
+  <text x="35" y="104" class="code">insert("Alice", 98)</text>
+  <text x="185" y="104" class="hash-note">hash("Alice") % 7 = 4</text>
+
+  <!-- Step 1: hash to find bucket -->
+  <circle cx="47" cy="130" r="11" fill="#2980b9"/>
+  <text x="47" y="135" text-anchor="middle" class="step-num">1</text>
+  <text x="66" y="135" class="label">Hash key &#x2192; bucket [4]</text>
+
+  <!-- BEFORE state -->
+  <text x="35" y="162" class="label-bold">Before:</text>
+
+  <!-- Bucket [4] with Diana → Alice -->
+  <text x="42" y="190" class="bucket-idx">[4]</text>
+  <rect x="62" y="175" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="89" y="192" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="117" y1="187" x2="147" y2="187" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Diana node -->
+  <rect x="150" y="175" width="60" height="25" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="210" y="175" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="180" y="192" text-anchor="middle" class="value">Diana</text>
+  <text x="224" y="192" text-anchor="middle" class="value-lg">78</text>
+  <line x1="238" y1="187" x2="268" y2="187" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Alice node -->
+  <rect x="271" y="175" width="60" height="25" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="331" y="175" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="301" y="192" text-anchor="middle" class="value">Alice</text>
+  <text x="345" y="192" text-anchor="middle" class="value-lg">95</text>
+
+  <!-- Step 2: walk chain, find Alice -->
+  <circle cx="47" cy="222" r="11" fill="#2980b9"/>
+  <text x="47" y="227" text-anchor="middle" class="step-num">2</text>
+  <text x="66" y="227" class="label">Walk chain &#x2014; "Diana"? No. "Alice"? Yes!</text>
+
+  <!-- Arrow pointing to Alice node -->
+  <line x1="304" y1="212" x2="304" y2="230" stroke="#2980b9" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="304" y="249" text-anchor="middle" class="code">current&#x2192;key == key</text>
+
+  <!-- Step 3: update value -->
+  <circle cx="47" cy="280" r="11" fill="#2980b9"/>
+  <text x="47" y="285" text-anchor="middle" class="step-num">3</text>
+  <text x="66" y="285" class="label-bold">Update value and return</text>
+
+  <!-- Code line -->
+  <rect x="33" y="296" width="280" height="18" rx="3" fill="#d6eaf8"/>
+  <text x="37" y="310" class="code">current&#x2192;value = value;  return;</text>
+
+  <!-- AFTER state -->
+  <text x="35" y="340" class="label-bold">After:</text>
+
+  <!-- Bucket [4] with Diana → Alice (updated) -->
+  <text x="42" y="368" class="bucket-idx">[4]</text>
+  <rect x="62" y="353" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="89" y="370" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="117" y1="365" x2="147" y2="365" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Diana node (unchanged) -->
+  <rect x="150" y="353" width="60" height="25" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="210" y="353" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="180" y="370" text-anchor="middle" class="value">Diana</text>
+  <text x="224" y="370" text-anchor="middle" class="value-lg">78</text>
+  <line x1="238" y1="365" x2="268" y2="365" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Alice node (value updated — highlighted) -->
+  <rect x="271" y="353" width="60" height="25" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="331" y="353" width="28" height="25" rx="3" fill="#f39c12" stroke="#e67e22" stroke-width="2.5"/>
+  <text x="301" y="370" text-anchor="middle" class="value">Alice</text>
+  <text x="345" y="370" text-anchor="middle" class="value-lg">98</text>
+
+  <text x="331" y="393" class="note">&#x2191; 95 &#x2192; 98</text>
+
+  <text x="35" y="440" class="note">No new node created. size_ unchanged. No duplicate keys allowed.</text>
+
+  <!-- ==================== CASE 2: Prepend (right side) ==================== -->
+  <rect x="490" y="62" width="455" height="400" rx="8" fill="#eafaf1" stroke="#27ae60" stroke-width="1.5"/>
+
+  <text x="510" y="86" class="label-green">Case 2: Key not found &#x2014; prepend new node</text>
+  <text x="510" y="104" class="code">insert("Diana", 78)</text>
+  <text x="670" y="104" class="hash-note">hash("Diana") % 7 = 4</text>
+
+  <!-- Step 1: hash to find bucket -->
+  <circle cx="522" cy="130" r="11" fill="#2980b9"/>
+  <text x="522" y="135" text-anchor="middle" class="step-num">1</text>
+  <text x="541" y="135" class="label">Hash key &#x2192; bucket [4]</text>
+
+  <!-- BEFORE state -->
+  <text x="510" y="162" class="label-bold">Before:</text>
+
+  <!-- Bucket [4] with Alice -->
+  <text x="517" y="190" class="bucket-idx">[4]</text>
+  <rect x="537" y="175" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="564" y="192" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="588" y1="187" x2="618" y2="187" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Alice node -->
+  <rect x="621" y="175" width="60" height="25" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="681" y="175" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <rect x="709" y="175" width="25" height="25" rx="3" fill="#f39c12" stroke="#e67e22" stroke-width="1.5"/>
+  <text x="651" y="192" text-anchor="middle" class="value">Alice</text>
+  <text x="695" y="192" text-anchor="middle" class="value-lg">95</text>
+  <line x1="734" y1="187" x2="764" y2="187" stroke="#bdc3c7" stroke-width="1.5" marker-end="url(#arr-g)"/>
+  <text x="773" y="192" class="empty-label">nullptr</text>
+
+  <!-- Step 2: walk chain, key not found -->
+  <circle cx="522" cy="222" r="11" fill="#2980b9"/>
+  <text x="522" y="227" text-anchor="middle" class="step-num">2</text>
+  <text x="541" y="227" class="label">Walk chain &#x2014; "Diana" not found</text>
+
+  <!-- Step 3: prepend — broken down -->
+  <circle cx="522" cy="254" r="11" fill="#27ae60"/>
+  <text x="522" y="259" text-anchor="middle" class="step-num">3</text>
+  <text x="541" y="259" class="label-bold">Prepend new node at head of chain</text>
+
+  <!-- Code line -->
+  <rect x="508" y="268" width="420" height="18" rx="3" fill="#d5f5e3"/>
+  <text x="512" y="282" class="code">buckets_[index] = new ChainNode(key, value, buckets_[index]);</text>
+
+  <!-- AFTER state -->
+  <text x="510" y="312" class="label-bold">After:</text>
+
+  <!-- Bucket [4] with Diana → Alice -->
+  <text x="517" y="340" class="bucket-idx">[4]</text>
+  <rect x="537" y="325" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="564" y="342" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="588" y1="337" x2="618" y2="337" stroke="#27ae60" stroke-width="2" marker-end="url(#arr-grn)"/>
+  <!-- Diana node (NEW — green border) -->
+  <rect x="621" y="325" width="60" height="25" rx="3" fill="#3498db" stroke="#27ae60" stroke-width="2.5"/>
+  <rect x="681" y="325" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="2"/>
+  <rect x="709" y="325" width="25" height="25" rx="3" fill="#f39c12" stroke="#e67e22" stroke-width="1.5"/>
+  <text x="651" y="342" text-anchor="middle" class="value">Diana</text>
+  <text x="695" y="342" text-anchor="middle" class="value-lg">78</text>
+  <line x1="734" y1="337" x2="764" y2="337" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Alice node (pushed back) -->
+  <rect x="767" y="325" width="60" height="25" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="827" y="325" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <rect x="855" y="325" width="25" height="25" rx="3" fill="#f39c12" stroke="#e67e22" stroke-width="1.5"/>
+  <text x="797" y="342" text-anchor="middle" class="value">Alice</text>
+  <text x="841" y="342" text-anchor="middle" class="value-lg">95</text>
+  <line x1="880" y1="337" x2="905" y2="337" stroke="#bdc3c7" stroke-width="1.5" marker-end="url(#arr-g)"/>
+  <text x="914" y="342" class="empty-label">nullptr</text>
+
+  <text x="621" y="365" class="new-node">&#x2191; new node</text>
+  <text x="767" y="365" class="note">&#x2191; was head, now second</text>
+
+  <!-- Step 4 -->
+  <circle cx="522" cy="398" r="11" fill="#2980b9"/>
+  <text x="522" y="403" text-anchor="middle" class="step-num">4</text>
+  <text x="541" y="403" class="label">++size_, then check load_factor()</text>
+
+  <text x="510" y="440" class="note">O(1) prepend &#x2014; same as push_front from Module 4. No traversal needed to add the node.</text>
+
+  <!-- ==================== Bottom bar ==================== -->
+  <rect x="0" y="475" width="960" height="55" fill="#f4f6f7"/>
+  <rect x="185" y="486" width="590" height="22" rx="4" fill="#d5f5e3" stroke="#27ae60" stroke-width="1"/>
+
+  <text x="480" y="501" text-anchor="middle" class="code">buckets_[index] = new ChainNode(key, value, buckets_[index]);</text>
+  <text x="480" y="523" text-anchor="middle" class="note">See chaining_prepend.png for a color-coded breakdown of this line</text>
+</svg>

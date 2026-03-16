@@ -7,7 +7,7 @@
 // ---------------------------------------------------------------------------
 //
 // ? SEE DIAGRAM: images/hash_table_overview.png — big picture: key → hash → index → bucket
-// ? SEE DIAGRAM: images/chaining/chain_node_structure.png — key/value/next fields
+// ? SEE DIAGRAM: images/chain_node_structure.png — key/value/next fields
 //
 // - Each bucket in a ChainingHashTable is a singly linked list of ChainNodes
 // - Every node stores a key-value pair and a pointer to the next node

@@ -24,8 +24,8 @@
 
   <!-- ==================== Formula box (purple) ==================== -->
   <rect x="30" y="64" width="740" height="52" rx="6" fill="#9b59b6" stroke="#8e44ad" stroke-width="2"/>
-  <text x="400" y="87" text-anchor="middle" style="font-size: 14px; fill: #fff; font-family: 'Consolas', monospace;">for each char c:   hash = hash &#xd7; 31 + c</text>
-  <text x="400" y="107" text-anchor="middle" style="font-size: 12px; fill: #ddd; font-family: 'Consolas', monospace;">then:   index = hash % capacity</text>
+  <text x="400" y="87" text-anchor="middle" style="font-size: 14px; fill: #fff; font-family: 'Consolas', monospace;">for each char c:   hash_value = hash_value &#xd7; 31 + c</text>
+  <text x="400" y="107" text-anchor="middle" style="font-size: 12px; fill: #ddd; font-family: 'Consolas', monospace;">then:   return hash_value % capacity_</text>
 
   <!-- ==================== Trace section ==================== -->
   <text x="30" y="145" class="step-label">Step 1: multiply-and-add &#x2014; tracing hash(&#x201c;Bob&#x201d;)</text>
@@ -34,7 +34,7 @@
   <text x="60" y="172" text-anchor="middle" class="label-bold">char</text>
   <text x="140" y="172" text-anchor="middle" class="label-bold">ASCII</text>
   <text x="380" y="172" text-anchor="middle" class="label-bold">calculation</text>
-  <text x="640" y="172" text-anchor="middle" class="label-bold">hash</text>
+  <text x="640" y="172" text-anchor="middle" class="label-bold">hash_value</text>
   <line x1="30" y1="179" x2="770" y2="179" stroke="#bdc3c7" stroke-width="1"/>
 
   <!-- Start row -->
@@ -84,7 +84,7 @@
 
   <!-- Callout: why these choices? -->
   <rect x="390" y="340" width="380" height="56" rx="8" fill="#f4f6f7" stroke="#bdc3c7" stroke-width="1.5"/>
-  <text x="405" y="361" class="label">&#x2022; Why 31? Prime, and x &#xd7; 31 = (x &lt;&lt; 5) &#x2212; x (fast)</text>
+  <text x="405" y="361" class="label">&#x2022; Why 31? It&#x2019;s prime &#x2014; produces good distribution</text>
   <text x="405" y="381" class="label">&#x2022; Why prime capacity? No shared factors &#x2192; even spread</text>
 
   <!-- ==================== Bottom note ==================== -->

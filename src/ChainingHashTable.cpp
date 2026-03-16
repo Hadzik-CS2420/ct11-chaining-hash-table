@@ -36,19 +36,19 @@ int ChainingHashTable::next_prime(int n) {
 // 1. Constructor
 // ---------------------------------------------------------------------------
 //
-// ? SEE DIAGRAM: images/chaining/chaining_hash_table.png — bucket array with chains
+// ? SEE DIAGRAM: images/bucket_array_init.png — empty bucket array, all nullptr
+// ? SEE DIAGRAM: images/chaining_hash_table.png — bucket array with chains
 //
-// ! DISCUSSION: The bucket array is a pointer-to-pointer (ChainNode**).
-//   - each element is a ChainNode* — the head of that bucket's chain
-//   - we initialize every bucket to nullptr (empty chain)
-//   - the () after new ChainNode*[capacity_] zero-initializes the array
+// ! DISCUSSION: The bucket array — new ChainNode*[capacity_]()
+//   - new allocates an array on the heap and returns a pointer to it (ChainNode**)
+//   - ChainNode* — each element is a pointer (head of a chain)
+//   - [capacity_] — creates one slot per bucket (capacity_ = 7)
+//   - () — zero-initializes every element to nullptr
+//
+// ? SEE DIAGRAM: images/prime_capacity.png — even vs. prime capacity distribution
 //
 // ! DISCUSSION: Why start with a PRIME capacity (7)?
-//   - hash functions use modulo: hash_value % capacity
-//   - if capacity is even (e.g. 8), only the last few bits of the hash matter
-//   - if capacity shares a factor with the hash, keys cluster into fewer buckets
-//   - a prime capacity has no common factors with any hash value, so entries
-//     distribute more evenly across all buckets
+//   - prime has no common factors with any hash value, so modulo spreads evenly
 //   - common choices: 7, 17, 37, 97 — resize() always picks the next prime
 //
 ChainingHashTable::ChainingHashTable(int capacity)
@@ -85,8 +85,8 @@ ChainingHashTable::~ChainingHashTable() {
 //
 // ! DISCUSSION: Two steps — see the diagram for the full walkthrough.
 //   - Step 1 (multiply-and-add): loop through each character, doing
-//     hash = hash * 31 + char — builds a large number unique to this key
-//   - Step 2 (modulo): hash % capacity_ maps that number into [0, capacity_)
+//     hash_value = hash_value * 31 + char — builds a large number unique to this key
+//   - Step 2 (modulo): hash_value % capacity_ maps that number into [0, capacity_)
 //   - resizing invalidates old indices — different capacity means different modulo
 //
 size_t ChainingHashTable::hash(const std::string& key) const {
@@ -103,30 +103,26 @@ size_t ChainingHashTable::hash(const std::string& key) const {
 // 4. insert() — add or update a key-value pair
 // ---------------------------------------------------------------------------
 //
-// ? SEE DIAGRAM: images/chaining/chaining_insert.png — prepend to chain at bucket
+// ? SEE DIAGRAM: images/chaining_insert.png — two cases: update or prepend
+// ? SEE DIAGRAM: images/chaining_prepend.png — color-coded breakdown of the prepend one-liner
 //
-// ! DISCUSSION: Insert has two cases — update or prepend.
-//   - first, hash the key to find the bucket index
-//   - walk the chain at that bucket looking for a matching key
-//   - if found: UPDATE the existing node's value (no duplicate keys allowed)
-//   - if not found: PREPEND a new node at the head of the chain
-//   - prepending is O(1) — same as push_front from Module 4
-//   - after inserting, check load factor and resize if needed
+// ! DISCUSSION: Two cases — update existing key or prepend new node.
+//   - hash the key, walk the chain, then update or prepend (see diagrams)
 //
 void ChainingHashTable::insert(const std::string& key, int value) {
     size_t index = hash(key);
 
-    // Walk the chain — check for duplicate key
+    // ── Case 1: UPDATE — walk the chain looking for a matching key ──
     ChainNode* current = buckets_[index];
     while (current != nullptr) {
         if (current->key == key) {
-            current->value = value;         // update existing entry
-            return;
+            current->value = value;         // key exists — update its value
+            return;                         // done, no new node needed
         }
         current = current->next;
     }
 
-    // Key not found — prepend a new node (O(1), same as push_front)
+    // ── Case 2: PREPEND — key not found, add new node at head of chain ──
     buckets_[index] = new ChainNode(key, value, buckets_[index]);
     ++size_;
 
@@ -139,6 +135,8 @@ void ChainingHashTable::insert(const std::string& key, int value) {
 // ---------------------------------------------------------------------------
 // 5. search() — find a value by key
 // ---------------------------------------------------------------------------
+//
+// ? SEE DIAGRAM: images/chaining_search.png — found vs. not found
 //
 // ! DISCUSSION: Search follows the same two-step pattern as insert.
 //   - hash the key to find the bucket index
@@ -154,7 +152,7 @@ int* ChainingHashTable::search(const std::string& key) const {
     ChainNode* current = buckets_[index];
     while (current != nullptr) {
         if (current->key == key) {
-            return &current->value;
+            return &current->value;  // return int* (address of the value)
         }
         current = current->next;
     }
@@ -165,7 +163,7 @@ int* ChainingHashTable::search(const std::string& key) const {
 // 6. remove() — delete a key from its chain
 // ---------------------------------------------------------------------------
 //
-// ? SEE DIAGRAM: images/chaining/chaining_remove.png — trailing pointer unlink
+// ? SEE DIAGRAM: images/chaining_remove.png — trailing pointer unlink
 //
 // ! DISCUSSION: Remove uses the trailing-pointer pattern from CT8.
 //   - hash the key to find the bucket, then walk with current and prev
@@ -202,7 +200,7 @@ bool ChainingHashTable::remove(const std::string& key) {
 // 7. load_factor() and resize()
 // ---------------------------------------------------------------------------
 //
-// ? SEE DIAGRAM: images/chaining/load_factor_resize.png — before/after rehash
+// ? SEE DIAGRAM: images/load_factor_resize.png — before/after rehash
 //
 // ! DISCUSSION: load_factor = size / capacity (cast to double!).
 //   - for chaining, load factor CAN exceed 1.0 (chains can be any length)

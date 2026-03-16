@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500">
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: bold; fill: #1a1a1a; }
+    .subtitle { font-size: 13px; fill: #555; }
+    .section-bad { font-size: 15px; font-weight: bold; fill: #c0392b; }
+    .section-good { font-size: 15px; font-weight: bold; fill: #27ae60; }
+    .bucket-idx { font-size: 12px; font-weight: bold; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .bar-label { font-size: 11px; font-weight: bold; fill: #fff; }
+    .empty-label { font-size: 11px; fill: #999; font-style: italic; }
+    .code { font-size: 12px; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .label { font-size: 12px; fill: #333; }
+    .label-bold { font-size: 12px; font-weight: bold; fill: #333; }
+    .note { font-size: 11px; fill: #777; font-style: italic; }
+    .stat-bad { font-size: 12px; font-weight: bold; fill: #c0392b; }
+    .stat-good { font-size: 12px; font-weight: bold; fill: #27ae60; }
+  </style>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="960" height="52" fill="#eaf2f8"/>
+  <text x="480" y="22" text-anchor="middle" class="title">Why Prime Capacity?</text>
+  <text x="480" y="42" text-anchor="middle" class="subtitle">When hash values share a factor with the capacity, entries cluster into fewer buckets</text>
+
+  <!-- Hash values strip -->
+  <rect x="0" y="52" width="960" height="32" fill="#f8f9fa"/>
+  <text x="30" y="73" class="label-bold">Example hash values:</text>
+  <text x="190" y="73" class="code">10, 16, 22, 28, 34, 40</text>
+  <text x="430" y="73" class="note">&#x2014; all even (common with multiply-and-add hash functions)</text>
+
+  <!-- ==================== LEFT: capacity = 8 (bad) ==================== -->
+  <rect x="15" y="92" width="445" height="290" rx="8" fill="#fdedec" stroke="#e74c3c" stroke-width="1.5"/>
+
+  <text x="35" y="115" class="section-bad">capacity = 8 (not prime)</text>
+  <text x="35" y="133" class="code">10%8=2 &#160; 16%8=0 &#160; 22%8=6 &#160; 28%8=4 &#160; 34%8=2 &#160; 40%8=0</text>
+
+  <!-- Bucket [0] — 16, 40 (collision) -->
+  <text x="35" y="163" class="bucket-idx">[0]</text>
+  <rect x="60" y="149" width="160" height="22" rx="4" fill="#e74c3c" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="140" y="164" text-anchor="middle" class="bar-label">16, 40</text>
+  <text x="228" y="164" class="note">collision!</text>
+
+  <!-- Bucket [1] — empty -->
+  <text x="35" y="191" class="bucket-idx">[1]</text>
+  <rect x="60" y="177" width="50" height="22" rx="4" fill="#ecf0f1" stroke="#ddd" stroke-width="1"/>
+  <text x="85" y="192" text-anchor="middle" class="empty-label">empty</text>
+
+  <!-- Bucket [2] — 10, 34 (collision) -->
+  <text x="35" y="219" class="bucket-idx">[2]</text>
+  <rect x="60" y="205" width="160" height="22" rx="4" fill="#e74c3c" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="140" y="220" text-anchor="middle" class="bar-label">10, 34</text>
+  <text x="228" y="220" class="note">collision!</text>
+
+  <!-- Bucket [3] — empty -->
+  <text x="35" y="247" class="bucket-idx">[3]</text>
+  <rect x="60" y="233" width="50" height="22" rx="4" fill="#ecf0f1" stroke="#ddd" stroke-width="1"/>
+  <text x="85" y="248" text-anchor="middle" class="empty-label">empty</text>
+
+  <!-- Bucket [4] — 28 -->
+  <text x="35" y="275" class="bucket-idx">[4]</text>
+  <rect x="60" y="261" width="80" height="22" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="100" y="276" text-anchor="middle" class="bar-label">28</text>
+
+  <!-- Bucket [5] — empty -->
+  <text x="35" y="303" class="bucket-idx">[5]</text>
+  <rect x="60" y="289" width="50" height="22" rx="4" fill="#ecf0f1" stroke="#ddd" stroke-width="1"/>
+  <text x="85" y="304" text-anchor="middle" class="empty-label">empty</text>
+
+  <!-- Bucket [6] — 22 -->
+  <text x="35" y="331" class="bucket-idx">[6]</text>
+  <rect x="60" y="317" width="80" height="22" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="100" y="332" text-anchor="middle" class="bar-label">22</text>
+
+  <!-- Bucket [7] — empty -->
+  <text x="35" y="359" class="bucket-idx">[7]</text>
+  <rect x="60" y="345" width="50" height="22" rx="4" fill="#ecf0f1" stroke="#ddd" stroke-width="1"/>
+  <text x="85" y="360" text-anchor="middle" class="empty-label">empty</text>
+
+  <text x="35" y="378" class="stat-bad">4 of 8 buckets empty (50%) &#x2014; odd buckets never used!</text>
+
+  <!-- ==================== RIGHT: capacity = 7 (good) ==================== -->
+  <rect x="500" y="92" width="445" height="290" rx="8" fill="#eafaf1" stroke="#27ae60" stroke-width="1.5"/>
+
+  <text x="520" y="115" class="section-good">capacity = 7 (prime)</text>
+  <text x="520" y="133" class="code">10%7=3 &#160; 16%7=2 &#160; 22%7=1 &#160; 28%7=0 &#160; 34%7=6 &#160; 40%7=5</text>
+
+  <!-- Bucket [0] — 28 -->
+  <text x="520" y="163" class="bucket-idx">[0]</text>
+  <rect x="545" y="149" width="80" height="22" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="585" y="164" text-anchor="middle" class="bar-label">28</text>
+
+  <!-- Bucket [1] — 22 -->
+  <text x="520" y="191" class="bucket-idx">[1]</text>
+  <rect x="545" y="177" width="80" height="22" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="585" y="192" text-anchor="middle" class="bar-label">22</text>
+
+  <!-- Bucket [2] — 16 -->
+  <text x="520" y="219" class="bucket-idx">[2]</text>
+  <rect x="545" y="205" width="80" height="22" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="585" y="220" text-anchor="middle" class="bar-label">16</text>
+
+  <!-- Bucket [3] — 10 -->
+  <text x="520" y="247" class="bucket-idx">[3]</text>
+  <rect x="545" y="233" width="80" height="22" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="585" y="248" text-anchor="middle" class="bar-label">10</text>
+
+  <!-- Bucket [4] — empty -->
+  <text x="520" y="275" class="bucket-idx">[4]</text>
+  <rect x="545" y="261" width="50" height="22" rx="4" fill="#ecf0f1" stroke="#ddd" stroke-width="1"/>
+  <text x="570" y="276" text-anchor="middle" class="empty-label">empty</text>
+
+  <!-- Bucket [5] — 40 -->
+  <text x="520" y="303" class="bucket-idx">[5]</text>
+  <rect x="545" y="289" width="80" height="22" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="585" y="304" text-anchor="middle" class="bar-label">40</text>
+
+  <!-- Bucket [6] — 34 -->
+  <text x="520" y="331" class="bucket-idx">[6]</text>
+  <rect x="545" y="317" width="80" height="22" rx="4" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <text x="585" y="332" text-anchor="middle" class="bar-label">34</text>
+
+  <text x="520" y="366" class="stat-good">Only 1 of 7 buckets empty (14%) &#x2014; entries spread evenly!</text>
+
+  <!-- ==================== Bottom callout ==================== -->
+  <rect x="15" y="400" width="930" height="90" rx="8" fill="#f4f6f7" stroke="#bdc3c7" stroke-width="1.5"/>
+
+  <text x="480" y="423" text-anchor="middle" class="label-bold">Why does this happen?</text>
+  <text x="35" y="443" class="label">&#x2022; Capacity 8 shares a factor of 2 with every even hash value &#x2014; so % 8 always produces an even result</text>
+  <text x="35" y="463" class="label">&#x2022; Capacity 7 (prime) shares no common factors &#x2014; modulo spreads values across all buckets</text>
+  <text x="35" y="483" class="label">&#x2022; This is why the constructor defaults to 7, and resize() always picks the next prime (17, 37, 97&#x2026;)</text>
+</svg>

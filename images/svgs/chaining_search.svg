@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 548">
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: bold; fill: #1a1a1a; }
+    .subtitle { font-size: 13px; fill: #555; }
+    .bucket-idx { font-size: 12px; font-weight: bold; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .value { font-size: 11px; font-weight: bold; fill: #fff; }
+    .value-lg { font-size: 12px; font-weight: bold; fill: #fff; }
+    .empty-label { font-size: 11px; fill: #999; font-style: italic; }
+    .label { font-size: 12px; fill: #333; }
+    .label-bold { font-size: 12px; font-weight: bold; fill: #333; }
+    .label-blue { font-size: 13px; font-weight: bold; fill: #2980b9; }
+    .label-red { font-size: 13px; font-weight: bold; fill: #c0392b; }
+    .code { font-size: 11px; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .note { font-size: 11px; fill: #777; font-style: italic; }
+    .hash-note { font-size: 11px; fill: #8e44ad; font-family: 'Consolas', monospace; }
+    .step-num { font-size: 14px; font-weight: bold; fill: #fff; }
+    .found { font-size: 12px; font-weight: bold; fill: #27ae60; }
+    .not-found { font-size: 12px; font-weight: bold; fill: #c0392b; }
+  </style>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#e74c3c"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bdc3c7"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2980b9"/>
+    </marker>
+  </defs>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="960" height="52" fill="#eaf2f8"/>
+  <text x="480" y="22" text-anchor="middle" class="title">search() &#x2014; Two Outcomes: Found or Not Found</text>
+  <text x="480" y="42" text-anchor="middle" class="subtitle">Hash the key to find the bucket, walk the chain comparing keys, return pointer or nullptr</text>
+
+  <!-- ==================== CASE 1: Found (left side) ==================== -->
+  <rect x="15" y="62" width="455" height="420" rx="8" fill="#eafaf1" stroke="#27ae60" stroke-width="1.5"/>
+
+  <text x="35" y="86" class="label-blue">Case 1: Key found &#x2014; return pointer to value</text>
+  <text x="35" y="104" class="code">search("Alice")</text>
+  <text x="170" y="104" class="hash-note">hash("Alice") % 7 = 4</text>
+
+  <!-- Step 1: hash to find bucket -->
+  <circle cx="47" cy="130" r="11" fill="#2980b9"/>
+  <text x="47" y="135" text-anchor="middle" class="step-num">1</text>
+  <text x="66" y="135" class="code">size_t index = hash(key);</text>
+  <text x="280" y="135" class="note">&#x2192; index = 4</text>
+
+  <!-- Bucket [4] with Diana → Alice -->
+  <text x="35" y="162" class="label-bold">Chain at bucket [4]:</text>
+
+  <!-- Step 2: walk chain — iteration 1 -->
+  <circle cx="47" cy="190" r="11" fill="#2980b9"/>
+  <text x="47" y="195" text-anchor="middle" class="step-num">2</text>
+  <text x="66" y="195" class="code">ChainNode* current = buckets_[index];</text>
+
+  <!-- Chain iteration 1: current → Diana -->
+  <text x="180" y="208" text-anchor="middle" class="code" fill="#2980b9">current</text>
+  <line x1="180" y1="211" x2="180" y2="228" stroke="#2980b9" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="42" y="246" class="bucket-idx">[4]</text>
+  <rect x="62" y="231" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="89" y="248" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="117" y1="243" x2="147" y2="243" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Diana node (highlighted — current is here) -->
+  <rect x="150" y="231" width="60" height="25" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="2.5"/>
+  <rect x="210" y="231" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="180" y="248" text-anchor="middle" class="value">Diana</text>
+  <text x="224" y="248" text-anchor="middle" class="value-lg">78</text>
+  <line x1="238" y1="243" x2="268" y2="243" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Alice node -->
+  <rect x="271" y="231" width="60" height="25" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="331" y="231" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="301" y="248" text-anchor="middle" class="value">Alice</text>
+  <text x="345" y="248" text-anchor="middle" class="value-lg">95</text>
+
+  <text x="66" y="272" class="note">"Diana" != "Alice" &#x2192; current = current&#x2192;next</text>
+
+  <!-- Chain iteration 2: current → Alice -->
+  <text x="301" y="291" text-anchor="middle" class="code" fill="#2980b9">current</text>
+  <line x1="301" y1="294" x2="301" y2="311" stroke="#2980b9" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="42" y="329" class="bucket-idx">[4]</text>
+  <rect x="62" y="314" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="89" y="331" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="117" y1="326" x2="147" y2="326" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Diana node (faded — already checked) -->
+  <rect x="150" y="314" width="60" height="25" rx="3" fill="#3498db" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <rect x="210" y="314" width="28" height="25" rx="3" fill="#2ecc71" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <text x="180" y="331" text-anchor="middle" class="value" opacity="0.4">Diana</text>
+  <text x="224" y="331" text-anchor="middle" class="value-lg" opacity="0.4">78</text>
+  <line x1="238" y1="326" x2="268" y2="326" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Alice node (highlighted — current is here, found!) -->
+  <rect x="271" y="314" width="60" height="25" rx="3" fill="#3498db" stroke="#27ae60" stroke-width="2.5"/>
+  <rect x="331" y="314" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="2.5"/>
+  <text x="301" y="331" text-anchor="middle" class="value">Alice</text>
+  <text x="345" y="331" text-anchor="middle" class="value-lg">95</text>
+
+  <text x="66" y="355" class="note">"Alice" == "Alice" &#x2192; found!</text>
+
+  <!-- Step 3: return -->
+  <circle cx="47" cy="383" r="11" fill="#27ae60"/>
+  <text x="47" y="388" text-anchor="middle" class="step-num">3</text>
+  <text x="66" y="388" class="found">Key found &#x2014; return pointer to value</text>
+
+  <rect x="33" y="400" width="280" height="18" rx="3" fill="#d5f5e3"/>
+  <text x="37" y="414" class="code">return &amp;current&#x2192;value;   // pointer to 95</text>
+
+  <text x="35" y="440" class="label-bold">Caller receives:</text>
+  <text x="35" y="456" class="code">int* result = table.search("Alice");</text>
+  <text x="35" y="472" class="label">result != nullptr &#x2192; *result == 95</text>
+
+  <!-- ==================== CASE 2: Not found (right side) ==================== -->
+  <rect x="490" y="62" width="455" height="420" rx="8" fill="#fdedec" stroke="#e74c3c" stroke-width="1.5"/>
+
+  <text x="510" y="86" class="label-red">Case 2: Key not found &#x2014; return nullptr</text>
+  <text x="510" y="104" class="code">search("Nick")</text>
+  <text x="645" y="104" class="hash-note">hash("Nick") % 7 = 4</text>
+
+  <!-- Step 1: hash to find bucket -->
+  <circle cx="522" cy="130" r="11" fill="#2980b9"/>
+  <text x="522" y="135" text-anchor="middle" class="step-num">1</text>
+  <text x="541" y="135" class="code">size_t index = hash(key);</text>
+  <text x="755" y="135" class="note">&#x2192; index = 4</text>
+
+  <!-- Same chain at bucket [4] -->
+  <text x="510" y="162" class="label-bold">Chain at bucket [4]:</text>
+
+  <!-- Step 2: walk chain — same chain as Case 1 -->
+  <circle cx="522" cy="190" r="11" fill="#2980b9"/>
+  <text x="522" y="195" text-anchor="middle" class="step-num">2</text>
+  <text x="541" y="195" class="code">ChainNode* current = buckets_[index];</text>
+
+  <!-- Chain: Diana → Alice -->
+  <text x="517" y="228" class="bucket-idx">[4]</text>
+  <rect x="537" y="213" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="564" y="230" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="592" y1="225" x2="622" y2="225" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Diana node (faded — checked, no match) -->
+  <rect x="625" y="213" width="60" height="25" rx="3" fill="#3498db" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <rect x="685" y="213" width="28" height="25" rx="3" fill="#2ecc71" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <text x="655" y="230" text-anchor="middle" class="value" opacity="0.4">Diana</text>
+  <text x="699" y="230" text-anchor="middle" class="value-lg" opacity="0.4">78</text>
+  <line x1="713" y1="225" x2="743" y2="225" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Alice node (faded — checked, no match) -->
+  <rect x="746" y="213" width="60" height="25" rx="3" fill="#3498db" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <rect x="806" y="213" width="28" height="25" rx="3" fill="#2ecc71" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <text x="776" y="230" text-anchor="middle" class="value" opacity="0.4">Alice</text>
+  <text x="820" y="230" text-anchor="middle" class="value-lg" opacity="0.4">95</text>
+  <line x1="834" y1="225" x2="864" y2="225" stroke="#bdc3c7" stroke-width="1.5" marker-end="url(#arr-g)"/>
+  <text x="873" y="230" class="empty-label">nullptr</text>
+
+  <text x="541" y="254" class="note">"Diana" != "Nick" &#x2192; current = current&#x2192;next</text>
+  <text x="541" y="270" class="note">"Alice" != "Nick" &#x2192; current = current&#x2192;next</text>
+  <text x="541" y="286" class="note">current == nullptr &#x2192; loop ends, key not in chain</text>
+
+  <!-- Step 3: return nullptr -->
+  <circle cx="522" cy="314" r="11" fill="#c0392b"/>
+  <text x="522" y="319" text-anchor="middle" class="step-num">3</text>
+  <text x="541" y="319" class="not-found">Key not found &#x2014; return nullptr</text>
+
+  <rect x="508" y="332" width="280" height="18" rx="3" fill="#fdedec"/>
+  <text x="512" y="346" class="code">return nullptr;   // key not in table</text>
+
+  <text x="510" y="378" class="label-bold">Caller receives:</text>
+  <text x="510" y="398" class="code">int* result = table.search("Nick");</text>
+  <text x="510" y="416" class="label">result == nullptr &#x2192; Nick is not in the table</text>
+
+  <text x="510" y="450" class="note">Worst case O(n) if every key hashes to the same bucket &#x2014; one long chain to walk</text>
+
+  <!-- ==================== Bottom bar ==================== -->
+  <rect x="0" y="488" width="960" height="55" fill="#f4f6f7"/>
+
+  <text x="480" y="511" text-anchor="middle" class="label-bold">Why return int* instead of int?</text>
+  <text x="480" y="531" text-anchor="middle" class="note">A pointer lets us distinguish &#x201c;found with value 0&#x201d; from &#x201c;not found&#x201d; &#x2014; nullptr means not found, any other pointer means found</text>
+</svg>
