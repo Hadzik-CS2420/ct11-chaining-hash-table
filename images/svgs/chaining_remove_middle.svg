@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 458">
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: bold; fill: #1a1a1a; }
+    .subtitle { font-size: 13px; fill: #555; }
+    .bucket-idx { font-size: 12px; font-weight: bold; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .value { font-size: 11px; font-weight: bold; fill: #fff; }
+    .value-lg { font-size: 12px; font-weight: bold; fill: #fff; }
+    .empty-label { font-size: 11px; fill: #999; font-style: italic; }
+    .label { font-size: 12px; fill: #333; }
+    .label-bold { font-size: 12px; font-weight: bold; fill: #333; }
+    .code { font-size: 11px; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .note { font-size: 11px; fill: #777; font-style: italic; }
+    .hash-note { font-size: 11px; fill: #8e44ad; font-family: 'Consolas', monospace; }
+    .step-num { font-size: 14px; font-weight: bold; fill: #fff; }
+    .deleted { font-size: 11px; font-weight: bold; fill: #c0392b; }
+  </style>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#e74c3c"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bdc3c7"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2980b9"/>
+    </marker>
+    <marker id="arr-purple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8e44ad"/>
+    </marker>
+  </defs>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="580" height="52" fill="#eaf2f8"/>
+  <text x="290" y="22" text-anchor="middle" class="title">remove() &#x2014; Case 2: Key in MIDDLE/TAIL</text>
+  <text x="290" y="42" text-anchor="middle" class="subtitle">prev != nullptr &#x2014; unlink by setting prev&#x2192;next = current&#x2192;next</text>
+
+  <text x="30" y="76" class="code">remove("Alice")</text>
+  <text x="180" y="76" class="hash-note">hash("Alice") % 7 = 4</text>
+
+  <!-- Step 1 -->
+  <circle cx="42" cy="102" r="11" fill="#2980b9"/>
+  <text x="42" y="107" text-anchor="middle" class="step-num">1</text>
+  <text x="61" y="107" class="code">size_t index = hash(key);</text>
+  <text x="280" y="107" class="note">&#x2192; index = 4</text>
+
+  <!-- Step 2 -->
+  <circle cx="42" cy="132" r="11" fill="#2980b9"/>
+  <text x="42" y="137" text-anchor="middle" class="step-num">2</text>
+  <text x="61" y="133" class="code">ChainNode* current = buckets_[index];</text>
+  <text x="61" y="147" class="code">ChainNode* prev = nullptr;</text>
+
+  <text x="61" y="168" class="note">"Diana" != "Alice" &#x2192; prev = current, current = current&#x2192;next</text>
+  <text x="61" y="184" class="note">"Alice" == "Alice" &#x2192; found! prev != nullptr &#x2192; middle/tail case</text>
+
+  <!-- Before -->
+  <text x="30" y="206" class="label-bold">Before:</text>
+
+  <!-- prev box pointing to Diana (centered over Diana node at x=175) -->
+  <rect x="150" y="210" width="50" height="28" rx="4" fill="#f5eef8" stroke="#8e44ad" stroke-width="1.5"/>
+  <text x="175" y="221" text-anchor="middle" class="code" fill="#8e44ad">prev</text>
+  <text x="175" y="233" text-anchor="middle" class="empty-label">Diana</text>
+  <line x1="175" y1="238" x2="175" y2="252" stroke="#8e44ad" stroke-width="2" marker-end="url(#arr-purple)"/>
+
+  <!-- current label with arrow pointing to Alice (centered over Alice node at x=296) -->
+  <text x="296" y="220" text-anchor="middle" class="code" fill="#2980b9">current</text>
+  <line x1="296" y1="223" x2="296" y2="252" stroke="#2980b9" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <!-- Chain: [4] → Diana → Alice → nullptr -->
+  <text x="37" y="270" class="bucket-idx">[4]</text>
+  <rect x="57" y="255" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="84" y="272" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="112" y1="267" x2="142" y2="267" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Diana (prev points here) -->
+  <rect x="145" y="255" width="60" height="25" rx="3" fill="#3498db" stroke="#8e44ad" stroke-width="2"/>
+  <rect x="205" y="255" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="175" y="272" text-anchor="middle" class="value">Diana</text>
+  <text x="219" y="272" text-anchor="middle" class="value-lg">78</text>
+  <line x1="233" y1="267" x2="263" y2="267" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Alice (to be removed) -->
+  <rect x="266" y="255" width="60" height="25" rx="3" fill="#3498db" stroke="#c0392b" stroke-width="2.5"/>
+  <rect x="326" y="255" width="28" height="25" rx="3" fill="#2ecc71" stroke="#c0392b" stroke-width="2"/>
+  <text x="296" y="272" text-anchor="middle" class="value">Alice</text>
+  <text x="340" y="272" text-anchor="middle" class="value-lg">95</text>
+  <line x1="354" y1="267" x2="384" y2="267" stroke="#bdc3c7" stroke-width="1.5" marker-end="url(#arr-g)"/>
+  <text x="393" y="272" class="empty-label">nullptr</text>
+
+  <!-- Step 3 -->
+  <circle cx="42" cy="303" r="11" fill="#8e44ad"/>
+  <text x="42" y="308" text-anchor="middle" class="step-num">3</text>
+  <text x="61" y="308" class="label-bold">Unlink: prev&#x2192;next skips over current</text>
+
+  <rect x="28" y="319" width="400" height="18" rx="3" fill="#f5eef8"/>
+  <text x="32" y="333" class="code">prev&#x2192;next = current&#x2192;next;   // Diana&#x2192;next = nullptr</text>
+
+  <!-- Step 4 -->
+  <circle cx="42" cy="359" r="11" fill="#c0392b"/>
+  <text x="42" y="364" text-anchor="middle" class="step-num">4</text>
+  <text x="61" y="364" class="code">delete current; --size_; return true;</text>
+
+  <!-- After -->
+  <text x="30" y="393" class="label-bold">After:</text>
+
+  <text x="37" y="421" class="bucket-idx">[4]</text>
+  <rect x="57" y="406" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="84" y="423" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="112" y1="418" x2="142" y2="418" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Diana remains -->
+  <rect x="145" y="406" width="60" height="25" rx="3" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+  <rect x="205" y="406" width="28" height="25" rx="3" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="175" y="423" text-anchor="middle" class="value">Diana</text>
+  <text x="219" y="423" text-anchor="middle" class="value-lg">78</text>
+  <line x1="233" y1="418" x2="263" y2="418" stroke="#bdc3c7" stroke-width="1.5" marker-end="url(#arr-g)"/>
+  <text x="272" y="423" class="empty-label">nullptr</text>
+
+  <text x="57" y="445" class="note">&#x2191; now nullptr (was Alice)</text>
+  <text x="310" y="423" class="deleted">Alice deleted</text>
+</svg>

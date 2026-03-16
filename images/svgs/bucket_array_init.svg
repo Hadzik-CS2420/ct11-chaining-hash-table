@@ -1,86 +1,101 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 510">
   <style>
     text { font-family: 'Segoe UI', Arial, sans-serif; }
     .title { font-size: 18px; font-weight: bold; fill: #1a1a1a; }
     .subtitle { font-size: 13px; fill: #555; }
     .step-label { font-size: 14px; font-weight: bold; fill: #333; }
+    .step-label-blue { font-size: 14px; font-weight: bold; fill: #2980b9; }
+    .step-label-purple { font-size: 14px; font-weight: bold; fill: #8e44ad; }
     .value { font-size: 13px; font-weight: bold; fill: #fff; }
     .label { font-size: 13px; fill: #333; }
     .label-bold { font-size: 13px; font-weight: bold; fill: #333; }
     .code { font-size: 12px; fill: #2c3e50; font-family: 'Consolas', monospace; }
     .note { font-size: 11px; fill: #777; font-style: italic; }
-    .empty-label { font-size: 12px; fill: #999; font-style: italic; }
-    .bucket-idx { font-size: 13px; font-weight: bold; fill: #333; font-family: 'Consolas', monospace; }
+    .empty-label { font-size: 12px; fill: #7f8c8d; font-style: italic; }
+    .bucket-idx { font-size: 13px; font-weight: bold; fill: #2c3e50; font-family: 'Consolas', monospace; }
   </style>
 
-  <!-- Title -->
-  <text x="400" y="28" text-anchor="middle" class="title">Constructor — Creating the Bucket Array</text>
-  <text x="400" y="48" text-anchor="middle" class="subtitle">new ChainNode*[7]() allocates an array of pointers, all initialized to nullptr</text>
+  <!-- Title bar -->
+  <rect x="0" y="0" width="800" height="56" rx="0" fill="#eaf2f8"/>
+  <text x="400" y="24" text-anchor="middle" class="title">Constructor &#x2014; Creating the Bucket Array</text>
+  <text x="400" y="44" text-anchor="middle" class="subtitle">new ChainNode*[7]() allocates an array of pointers, all initialized to nullptr</text>
 
-  <!-- Code section -->
-  <text x="30" y="82" class="step-label">Constructor code:</text>
+  <!-- Code section with background -->
+  <rect x="0" y="56" width="800" height="55" fill="#f8f9fa"/>
+  <text x="30" y="80" class="step-label">Constructor code:</text>
+  <rect x="28" y="88" width="440" height="18" rx="3" fill="#eaf2f8"/>
   <text x="30" y="102" class="code">buckets_ = new ChainNode*[capacity_]();     // capacity_ = 7</text>
-  <text x="30" y="118" class="note">The () zero-initializes all pointers to nullptr — without it, they would contain garbage</text>
 
   <!-- ==================== Array label ==================== -->
-  <text x="30" y="152" class="label-bold">buckets_</text>
-  <text x="30" y="168" class="code">ChainNode** (capacity = 7)</text>
+  <text x="30" y="142" class="label-bold">buckets_</text>
+  <text x="95" y="142" class="code" fill="#8e44ad">ChainNode**</text>
+  <text x="10" y="160" class="note">index</text>
 
   <!-- ==================== Bucket array ==================== -->
   <!-- [0] -->
-  <text x="20" y="199" text-anchor="middle" class="bucket-idx">[0]</text>
-  <rect x="40" y="183" width="100" height="28" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
-  <text x="90" y="202" text-anchor="middle" class="empty-label">nullptr</text>
+  <text x="20" y="179" text-anchor="middle" class="bucket-idx">[0]</text>
+  <rect x="40" y="163" width="100" height="28" rx="3" fill="#eaf2f8" stroke="#3498db" stroke-width="1.5"/>
+  <text x="90" y="182" text-anchor="middle" class="empty-label">nullptr</text>
 
   <!-- [1] -->
-  <text x="20" y="231" text-anchor="middle" class="bucket-idx">[1]</text>
-  <rect x="40" y="215" width="100" height="28" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
-  <text x="90" y="234" text-anchor="middle" class="empty-label">nullptr</text>
+  <text x="20" y="211" text-anchor="middle" class="bucket-idx">[1]</text>
+  <rect x="40" y="195" width="100" height="28" rx="3" fill="#eaf2f8" stroke="#3498db" stroke-width="1.5"/>
+  <text x="90" y="214" text-anchor="middle" class="empty-label">nullptr</text>
 
   <!-- [2] -->
-  <text x="20" y="263" text-anchor="middle" class="bucket-idx">[2]</text>
-  <rect x="40" y="247" width="100" height="28" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
-  <text x="90" y="266" text-anchor="middle" class="empty-label">nullptr</text>
+  <text x="20" y="243" text-anchor="middle" class="bucket-idx">[2]</text>
+  <rect x="40" y="227" width="100" height="28" rx="3" fill="#eaf2f8" stroke="#3498db" stroke-width="1.5"/>
+  <text x="90" y="246" text-anchor="middle" class="empty-label">nullptr</text>
 
   <!-- [3] -->
-  <text x="20" y="295" text-anchor="middle" class="bucket-idx">[3]</text>
-  <rect x="40" y="279" width="100" height="28" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
-  <text x="90" y="298" text-anchor="middle" class="empty-label">nullptr</text>
+  <text x="20" y="275" text-anchor="middle" class="bucket-idx">[3]</text>
+  <rect x="40" y="259" width="100" height="28" rx="3" fill="#eaf2f8" stroke="#3498db" stroke-width="1.5"/>
+  <text x="90" y="278" text-anchor="middle" class="empty-label">nullptr</text>
 
   <!-- [4] -->
-  <text x="20" y="327" text-anchor="middle" class="bucket-idx">[4]</text>
-  <rect x="40" y="311" width="100" height="28" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
-  <text x="90" y="330" text-anchor="middle" class="empty-label">nullptr</text>
+  <text x="20" y="307" text-anchor="middle" class="bucket-idx">[4]</text>
+  <rect x="40" y="291" width="100" height="28" rx="3" fill="#eaf2f8" stroke="#3498db" stroke-width="1.5"/>
+  <text x="90" y="310" text-anchor="middle" class="empty-label">nullptr</text>
 
   <!-- [5] -->
-  <text x="20" y="359" text-anchor="middle" class="bucket-idx">[5]</text>
-  <rect x="40" y="343" width="100" height="28" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
-  <text x="90" y="362" text-anchor="middle" class="empty-label">nullptr</text>
+  <text x="20" y="339" text-anchor="middle" class="bucket-idx">[5]</text>
+  <rect x="40" y="323" width="100" height="28" rx="3" fill="#eaf2f8" stroke="#3498db" stroke-width="1.5"/>
+  <text x="90" y="342" text-anchor="middle" class="empty-label">nullptr</text>
 
   <!-- [6] -->
-  <text x="20" y="391" text-anchor="middle" class="bucket-idx">[6]</text>
-  <rect x="40" y="375" width="100" height="28" rx="3" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1.5"/>
-  <text x="90" y="394" text-anchor="middle" class="empty-label">nullptr</text>
+  <text x="20" y="371" text-anchor="middle" class="bucket-idx">[6]</text>
+  <rect x="40" y="355" width="100" height="28" rx="3" fill="#eaf2f8" stroke="#3498db" stroke-width="1.5"/>
+  <text x="90" y="374" text-anchor="middle" class="empty-label">nullptr</text>
 
-  <!-- ==================== Annotation callout (right side) ==================== -->
-  <rect x="185" y="148" width="595" height="165" rx="8" fill="#f4f6f7" stroke="#bdc3c7" stroke-width="1.5"/>
+  <!-- ==================== Top callout — Each slot is a bucket ==================== -->
+  <rect x="185" y="140" width="595" height="100" rx="8" fill="#eafaf1" stroke="#27ae60" stroke-width="1.5"/>
 
-  <text x="205" y="173" class="step-label">Each slot is a bucket:</text>
-  <text x="205" y="196" class="label">&#x2022; Type: ChainNode* &#x2014; a pointer (head of a chain)</text>
-  <text x="205" y="216" class="label">&#x2022; Value: nullptr &#x2014; empty bucket, no chain yet</text>
-  <text x="205" y="236" class="label">&#x2022; Same as head_ = nullptr in SinglyLinkedList</text>
+  <text x="205" y="163" class="step-label-blue">Each slot is a bucket:</text>
+  <text x="205" y="183" class="label">&#x2022; [0] through [6] are array indices &#x2014; this is an array, not a linked list</text>
+  <text x="205" y="203" class="label">&#x2022; Type: ChainNode* &#x2014; a pointer (head of a chain)</text>
+  <text x="205" y="223" class="label">&#x2022; Value: nullptr &#x2014; no list exists here yet, insert() creates the first node</text>
 
-  <line x1="205" y1="250" x2="760" y2="250" stroke="#ddd" stroke-width="1"/>
+  <!-- ==================== Bottom callout — Why two stars ==================== -->
+  <rect x="185" y="252" width="595" height="155" rx="8" fill="#f5eef8" stroke="#8e44ad" stroke-width="1.5"/>
 
-  <text x="205" y="270" class="step-label">Why two stars in ChainNode**?</text>
-  <text x="205" y="293" class="label">&#x2022; One * = array on the heap (new ChainNode*[7])</text>
-  <text x="205" y="313" class="label">&#x2022; Other * = each element is a pointer (ChainNode*)</text>
+  <text x="205" y="275" class="step-label-purple">Why two stars in ChainNode**?</text>
+  <rect x="203" y="282" width="310" height="18" rx="3" fill="#ede0f5"/>
+  <text x="205" y="295" class="code">ChainNode** buckets_;</text>
+  <text x="530" y="295" class="note">&#x2190; declaration (two *)</text>
+  <rect x="203" y="302" width="310" height="18" rx="3" fill="#ede0f5"/>
+  <text x="205" y="315" class="code">buckets_ = new ChainNode*[7]();</text>
+  <text x="530" y="315" class="note">&#x2190; new returns one *</text>
+  <text x="205" y="340" class="label">&#x2022; new allocates an array on the heap and returns a pointer to it (ChainNode**)</text>
+  <text x="205" y="360" class="label">&#x2022; ChainNode* &#x2014; each element is a pointer (head of a chain)</text>
+  <text x="205" y="380" class="label">&#x2022; [7] &#x2014; creates 7 slots, one bucket per capacity (capacity_ = 7)</text>
+  <text x="205" y="400" class="label">&#x2022; () &#x2014; zero-initializes every element to nullptr</text>
 
   <!-- ==================== Bottom summary ==================== -->
-  <line x1="185" y1="340" x2="780" y2="340" stroke="#ddd" stroke-width="1" stroke-dasharray="6,4"/>
+  <rect x="0" y="420" width="800" height="30" fill="#f8f9fa"/>
+  <text x="205" y="440" class="code">size_ = 0  &#x2022;  capacity_ = 7</text>
+  <text x="420" y="440" class="note">Table is empty &#x2014; insert() creates ChainNodes and stores them in these slots</text>
 
-  <text x="205" y="363" class="code">size_ = 0  &#x2022;  capacity_ = 7</text>
-  <text x="420" y="363" class="note">Table is empty &#x2014; insert() creates ChainNodes and stores them in these slots</text>
-
-  <text x="400" y="425" text-anchor="middle" class="note">A &#x201c;bucket&#x201d; is not a data structure &#x2014; it&#x2019;s just a pointer slot that becomes the head of a linked-list chain</text>
+  <!-- Footer -->
+  <rect x="0" y="465" width="800" height="45" rx="0" fill="#eaf2f8"/>
+  <text x="400" y="492" text-anchor="middle" class="note">A &#x201c;bucket&#x201d; is not a data structure &#x2014; it&#x2019;s just a pointer slot that becomes the head of a linked-list chain</text>
 </svg>
