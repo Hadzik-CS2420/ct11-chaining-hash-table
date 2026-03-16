@@ -1,4 +1,4 @@
-# CT10 — Hash Tables
+# CT10 — Chaining Hash Tables
 
 ## Overview
 
