@@ -6,7 +6,7 @@
 // - Student names are the KEYS, integer grades are the VALUES
 // - When two names hash to the same bucket, the entries form a
 //   linked-list chain at that index
-// - This file contains TODOs 1-9 for the chaining portion of CT10
+// - This file contains TODOs 1-9 for CT10
 //
 
 #include "ChainingHashTable.h"
@@ -53,9 +53,7 @@ int ChainingHashTable::next_prime(int n) {
 //
 ChainingHashTable::ChainingHashTable(int capacity)
     : size_(0), capacity_(capacity) {
-    // TODO: Allocate the bucket array on the heap using new ChainNode*[capacity_]()
-    //       The () at the end zero-initializes every element to nullptr
-
+    buckets_ = new ChainNode*[capacity_]();     // () zero-inits to nullptr
 }
 
 // ---------------------------------------------------------------------------
@@ -68,15 +66,15 @@ ChainingHashTable::ChainingHashTable(int capacity)
 //   - after all chains are deleted, delete[] the bucket array itself
 //
 ChainingHashTable::~ChainingHashTable() {
-    // TODO: For each bucket (0 to capacity_-1):
-    //         Set current to buckets_[i]
-    //         While current is not nullptr:
-    //           Save current in a temp pointer
-    //           Advance current to current->next
-    //           Delete temp
-
-    // TODO: delete[] the bucket array itself
-
+    for (int i = 0; i < capacity_; ++i) {
+        ChainNode* current = buckets_[i];
+        while (current != nullptr) {
+            ChainNode* temp = current;
+            current = current->next;
+            delete temp;
+        }
+    }
+    delete[] buckets_;
 }
 
 // ---------------------------------------------------------------------------
@@ -92,14 +90,13 @@ ChainingHashTable::~ChainingHashTable() {
 //   - resizing invalidates old indices — different capacity means different modulo
 //
 size_t ChainingHashTable::hash(const std::string& key) const {
-    // TODO: Create a size_t variable called hash_value, initialized to 0
-
-    // TODO: For each char c in key:
-    //         hash_value = hash_value * 31 + c
-
-    // TODO: Return hash_value % capacity_
-
-    return 0; // placeholder — remove when done
+    // Step 1: multiply-and-add — build a large number from the key
+    size_t hash_value = 0;
+    for (char c : key) {
+        hash_value = hash_value * 31 + c;       // ? each char shifts and adds
+    }
+    // Step 2: modulo — map into a valid bucket index [0, capacity_)
+    return hash_value % capacity_;
 }
 
 // ---------------------------------------------------------------------------
@@ -113,21 +110,26 @@ size_t ChainingHashTable::hash(const std::string& key) const {
 //   - hash the key, walk the chain, then update or prepend (see diagrams)
 //
 void ChainingHashTable::insert(const std::string& key, int value) {
-    // TODO: Hash the key to get the bucket index
+    size_t index = hash(key);
 
     // ── Case 1: UPDATE — walk the chain looking for a matching key ──
-    // TODO: Set current to buckets_[index]
-    // TODO: While current is not nullptr:
-    //         If current->key == key:
-    //           Update current->value and return
-    //         Advance current to current->next
+    ChainNode* current = buckets_[index];
+    while (current != nullptr) {
+        if (current->key == key) {
+            current->value = value;         // key exists — update its value
+            return;                         // done, no new node needed
+        }
+        current = current->next;
+    }
 
     // ── Case 2: PREPEND — key not found, add new node at head of chain ──
-    // TODO: buckets_[index] = new ChainNode(key, value, buckets_[index]);
-    // TODO: Increment size_
+    buckets_[index] = new ChainNode(key, value, buckets_[index]);
+    ++size_;
 
-    // TODO: If load_factor() > MAX_LOAD_FACTOR, call resize()
-
+    // Resize if load factor exceeds threshold
+    if (load_factor() > MAX_LOAD_FACTOR) {
+        resize();
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -145,17 +147,16 @@ void ChainingHashTable::insert(const std::string& key, int value) {
 //   - worst case O(n) if every key hashes to the same bucket (one long chain)
 //
 int* ChainingHashTable::search(const std::string& key) const {
-    // TODO: Hash the key to get the bucket index
+    size_t index = hash(key);
 
-    // TODO: Set current to buckets_[index]
-    // TODO: While current is not nullptr:
-    //         If current->key == key:
-    //           return &current->value  (return int* — address of the value)
-    //         Advance current to current->next
-
-    // TODO: Return nullptr — key not found
-
-    return nullptr; // placeholder — remove when done
+    ChainNode* current = buckets_[index];
+    while (current != nullptr) {
+        if (current->key == key) {
+            return &current->value;  // return int* (address of the value)
+        }
+        current = current->next;
+    }
+    return nullptr;                         // key not in table
 }
 
 // ---------------------------------------------------------------------------
@@ -175,22 +176,26 @@ int* ChainingHashTable::search(const std::string& key) const {
 //   - after unlinking, delete the node and decrement size_
 //
 bool ChainingHashTable::remove(const std::string& key) {
-    // TODO: Hash the key to get the bucket index
+    size_t index = hash(key);
 
-    // TODO: Create current = buckets_[index] and prev = nullptr
+    ChainNode* current = buckets_[index];
+    ChainNode* prev = nullptr;
 
-    // TODO: While current is not nullptr:
-    //         If current->key == key:
-    //           If prev == nullptr:
-    //             buckets_[index] = current->next  (remove head)
-    //           Else:
-    //             prev->next = current->next        (unlink middle/tail)
-    //           Delete current, decrement size_, return true
-    //         Advance: prev = current, current = current->next
-
-    // TODO: Return false — key not found
-
-    return false; // placeholder — remove when done
+    while (current != nullptr) {
+        if (current->key == key) {
+            if (prev == nullptr) {
+                buckets_[index] = current->next;    // remove head of chain
+            } else {
+                prev->next = current->next;         // unlink from middle/tail
+            }
+            delete current;
+            --size_;
+            return true;
+        }
+        prev = current;
+        current = current->next;
+    }
+    return false;                           // key not found
 }
 
 // ---------------------------------------------------------------------------
@@ -204,10 +209,7 @@ bool ChainingHashTable::remove(const std::string& key) {
 //   - we resize when it exceeds MAX_LOAD_FACTOR (1.0 = average 1 entry/bucket)
 //
 double ChainingHashTable::load_factor() const {
-    // TODO: Return size_ / capacity_ as a double
-    //       Hint: use static_cast<double>(size_) to avoid integer division
-
-    return 0.0; // placeholder — remove when done
+    return static_cast<double>(size_) / capacity_;
 }
 
 // ---------------------------------------------------------------------------
@@ -219,19 +221,24 @@ double ChainingHashTable::load_factor() const {
 // ! DISCUSSION: Resize is O(n) — every entry must be rehashed (see diagram).
 //
 void ChainingHashTable::resize() {
-    // TODO: Save old_capacity and old_buckets (we need them to rehash)
+    int old_capacity = capacity_;            // save old size before changing
+    ChainNode** old_buckets = buckets_;      // save pointer to old array
 
-    // TODO: Set capacity_ to next_prime(old_capacity * 2)
-    // TODO: Allocate a new empty bucket array: new ChainNode*[capacity_]()
-    // TODO: Reset size_ to 0 (insert() will re-increment as we rehash)
+    capacity_ = next_prime(old_capacity * 2); // new capacity ≈ 2x, always prime
+    buckets_ = new ChainNode*[capacity_]();   // allocate new empty bucket array
+    size_ = 0;                                // reset — insert() will re-increment
 
-    // TODO: For each bucket in the OLD table (0 to old_capacity-1):
-    //         Walk the chain:
-    //           Call insert(current->key, current->value) to rehash
-    //           Save current in temp, advance current, delete temp
-
-    // TODO: delete[] old_buckets
-
+    // Walk every chain in the old table and rehash each entry
+    for (int i = 0; i < old_capacity; ++i) {
+        ChainNode* current = old_buckets[i];  // head of old chain at bucket i
+        while (current != nullptr) {
+            insert(current->key, current->value); // rehash with new capacity_
+            ChainNode* temp = current;            // save before advancing
+            current = current->next;              // advance to next node
+            delete temp;                          // free the old node
+        }
+    }
+    delete[] old_buckets;                     // free the old bucket array
 }
 
 // ---------------------------------------------------------------------------
@@ -244,10 +251,19 @@ void ChainingHashTable::resize() {
 //   - helps students verify their hash function distributes keys well
 //
 void ChainingHashTable::print() const {
-    // TODO: For each bucket (0 to capacity_-1):
-    //         Print "[i]: "
-    //         If the bucket is nullptr, print "empty"
-    //         Otherwise walk the chain, printing each (key, value) pair
-    //         Print a newline
-
+    for (int i = 0; i < capacity_; ++i) {
+        std::cout << "  [" << i << "]: ";
+        ChainNode* current = buckets_[i];
+        if (current == nullptr) {
+            std::cout << "empty";
+        }
+        while (current != nullptr) {
+            std::cout << "(" << current->key << ", " << current->value << ")";
+            if (current->next != nullptr) {
+                std::cout << " -> ";
+            }
+            current = current->next;
+        }
+        std::cout << "\n";
+    }
 }
