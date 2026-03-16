@@ -23,12 +23,7 @@ int main() {
     // TODO 1: Insert five student grades into the chaining table
     // -----------------------------------------------------------------------
     std::cout << "Adding student grades...\n";
-    grade_book.insert("Alice",   95);
-    grade_book.insert("Bob",     82);
-    grade_book.insert("Charlie", 91);
-    grade_book.insert("Diana",   78);
-    grade_book.insert("Eve",     88);
-    std::cout << "  Inserted 5 students (size=" << grade_book.size() << ")\n";
+    // TODO: insert Alice(95), Bob(82), Charlie(91), Diana(78), Eve(88)
 
     // -----------------------------------------------------------------------
     // TODO 2: Print the table to see the bucket layout
@@ -40,24 +35,15 @@ int main() {
     //   - Diana was inserted after Alice, but prepend puts Diana first in chain
     //
     std::cout << "\nGrade Book contents:\n";
-    grade_book.print();
-    std::cout << "  Load factor: " << grade_book.load_factor() << "\n";
+    // TODO: print the table
+    // TODO: print the load factor
 
     // -----------------------------------------------------------------------
     // TODO 3: Search for existing and missing students
     // -----------------------------------------------------------------------
     std::cout << "\nSearching for grades...\n";
-    int* grade = grade_book.search("Charlie");
-    if (grade) {
-        std::cout << "  Charlie's grade: " << *grade << "\n";
-    }
-
-    grade = grade_book.search("Frank");
-    if (grade) {
-        std::cout << "  Frank's grade: " << *grade << "\n";
-    } else {
-        std::cout << "  Frank: not enrolled\n";
-    }
+    // TODO: search for "Charlie" — print grade if found
+    // TODO: search for "Frank"   — print "not enrolled" if not found
 
     // -----------------------------------------------------------------------
     // TODO 4: Update a grade and remove a student
@@ -68,16 +54,10 @@ int main() {
     //   - the same insert() function handles both new keys and updates
     //
     std::cout << "\nBob retook the exam...\n";
-    grade_book.insert("Bob", 94);
-    grade = grade_book.search("Bob");
-    std::cout << "  Bob's updated grade: " << *grade << "\n";
+    // TODO: re-insert Bob with grade 94 (update) and print his new grade
 
     std::cout << "\nDiana dropped the class...\n";
-    grade_book.remove("Diana");
-    std::cout << "  Size after removal: " << grade_book.size() << "\n";
-
-    std::cout << "\nUpdated grade book:\n";
-    grade_book.print();
+    // TODO: remove Diana, print size after removal, then print updated table
 
     std::cout << "\n=== CT10 Complete ===\n";
     return 0;
