@@ -163,7 +163,9 @@ int* ChainingHashTable::search(const std::string& key) const {
 // 6. remove() — delete a key from its chain
 // ---------------------------------------------------------------------------
 //
-// ? SEE DIAGRAM: images/chaining_remove.png — trailing pointer unlink
+// ? SEE DIAGRAM: images/chaining_remove_head.png — case 1: key at head
+// ? SEE DIAGRAM: images/chaining_remove_middle.png — case 2: key in middle/tail
+// ? SEE DIAGRAM: images/chaining_remove_notfound.png — case 3: key not found
 //
 // ! DISCUSSION: Remove uses the trailing-pointer pattern from CT8.
 //   - hash the key to find the bucket, then walk with current and prev
@@ -197,7 +199,7 @@ bool ChainingHashTable::remove(const std::string& key) {
 }
 
 // ---------------------------------------------------------------------------
-// 7. load_factor() and resize()
+// 7. load_factor()
 // ---------------------------------------------------------------------------
 //
 // ? SEE DIAGRAM: images/load_factor_resize.png — before/after rehash
@@ -205,39 +207,42 @@ bool ChainingHashTable::remove(const std::string& key) {
 // ! DISCUSSION: load_factor = size / capacity (cast to double!).
 //   - for chaining, load factor CAN exceed 1.0 (chains can be any length)
 //   - we resize when it exceeds MAX_LOAD_FACTOR (1.0 = average 1 entry/bucket)
-//   - resize picks a new prime capacity roughly double the old one
-//   - every existing entry must be REHASHED — old indices are invalid because
-//     the modulo divisor changed
-//   - we reuse insert() to rehash — it calls hash() with the new capacity_
 //
 double ChainingHashTable::load_factor() const {
     return static_cast<double>(size_) / capacity_;
 }
 
+// ---------------------------------------------------------------------------
+// 8. resize()
+// ---------------------------------------------------------------------------
+//
+// ? SEE DIAGRAM: images/load_factor_resize.png — before/after rehash
+//
+// ! DISCUSSION: Resize is O(n) — every entry must be rehashed (see diagram).
+//
 void ChainingHashTable::resize() {
-    int old_capacity = capacity_;
-    ChainNode** old_buckets = buckets_;
+    int old_capacity = capacity_;            // save old size before changing
+    ChainNode** old_buckets = buckets_;      // save pointer to old array
 
-    // Allocate new, larger bucket array
-    capacity_ = next_prime(old_capacity * 2);
-    buckets_ = new ChainNode*[capacity_]();
-    size_ = 0;                              // insert() will re-increment
+    capacity_ = next_prime(old_capacity * 2); // new capacity ≈ 2x, always prime
+    buckets_ = new ChainNode*[capacity_]();   // allocate new empty bucket array
+    size_ = 0;                                // reset — insert() will re-increment
 
-    // Rehash every entry from the old table
+    // Walk every chain in the old table and rehash each entry
     for (int i = 0; i < old_capacity; ++i) {
-        ChainNode* current = old_buckets[i];
+        ChainNode* current = old_buckets[i];  // head of old chain at bucket i
         while (current != nullptr) {
-            insert(current->key, current->value);   // rehash into new table
-            ChainNode* temp = current;
-            current = current->next;
-            delete temp;
+            insert(current->key, current->value); // rehash with new capacity_
+            ChainNode* temp = current;            // save before advancing
+            current = current->next;              // advance to next node
+            delete temp;                          // free the old node
         }
     }
-    delete[] old_buckets;
+    delete[] old_buckets;                     // free the old bucket array
 }
 
 // ---------------------------------------------------------------------------
-// 8. print() — display each bucket's chain
+// 9. print() — display each bucket's chain
 // ---------------------------------------------------------------------------
 //
 // ! DISCUSSION: print() reveals the internal structure of the hash table.
