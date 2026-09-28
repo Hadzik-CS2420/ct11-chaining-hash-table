@@ -1,10 +1,17 @@
 {
   "assignment": {
-    "canvas_title":         "👨‍💻 Code-Together 10: Chaining Hash Table",
-    "points_possible":      30,
-    "submission_types":     ["online_url"],
-    "github_classroom":     true,
+    "canvas_title": "👨‍💻 Code-Together 10: Chaining Hash Table",
+    "points_possible": 30,
+    "submission_types": [
+      "online_upload"
+    ],
+    "github_classroom": true,
     "github_classroom_url": "",
-    "github_template_url":  ""
+    "github_template_url": "",
+    "allowed_extensions": [
+      "png",
+      "jpg",
+      "jpeg"
+    ]
   }
 }
