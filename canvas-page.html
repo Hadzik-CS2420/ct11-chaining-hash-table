@@ -1,300 +1,275 @@
-<!-- Canvas LMS HTML Fragment — paste into the Rich Content Editor (HTML view) -->
+<!-- Canvas LMS HTML Fragment — hand-authored. Collapsible sections follow the
+     CS 1400 code-together pattern: details/summary with the heading inside the
+     summary. Verified to survive Canvas's HTML sanitizer; keyboard-accessible
+     natively, no JS or ARIA. Matches the structure of CT 07, CT 08 and CT 09.
+     No SVG is embedded here on purpose — inline SVG trips Canvas's accessibility
+     checker, and Weber's Canvas rejects SVG on course import. The diagrams are
+     named in a table and read in the repository.
+     Part points match the SECTIONS table in tests/scorecard.py, section for
+     section. Starting score (0/30) measured by building the starter in the Dev
+     Container image. -->
 
-<h2>👨‍💻 Code-Together 11: Chaining Hash Tables</h2>
+<h3>&#x1F3AF; Overview</h3>
+<p>A linked list has to walk from the front to find anything, so looking up one value out of a thousand means up to a thousand steps. A hash table turns the key itself into an index &mdash; it computes where the value <em>should</em> be and goes straight there, in roughly constant time no matter how much data is in the table.</p>
+<p>Two keys can land on the same index, and that is the whole problem this activity solves. <strong>Separate chaining</strong> gives each bucket its own linked list, so a collision just means a slightly longer chain to walk. You are writing the table behind a professor&#x2019;s grade book: insert a student, look up a grade, drop a student, and grow the table before the chains get long enough to matter.</p>
+<p>One file of implementation, <strong>10 TODOs</strong>, plus four in <code>main.cpp</code> that drive the demo. Worth <strong>30 points</strong>, and you can check your own score at any time.</p>
 
-<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
-<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F3AF; Overview</h3></summary>
-
-<p>An in-class code-together activity introducing hash tables &mdash; the first data structure that maps <strong>keys to values</strong> using a hash function. In Part 1, students build a <strong>ChainingHashTable</strong> that resolves collisions by storing linked-list chains at each bucket. In Part 2, students build a <strong>ProbingHashTable</strong> that resolves collisions by scanning forward (linear probing) and uses tombstone deletion. Both parts cover load factor monitoring and resizing with rehashing. The scenario follows a professor's grade book: student names are keys, integer grades are values.</p>
-</details>
-
-<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
-<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F4D6; Learning Objectives</h3></summary>
-
+<h3>&#x1F4D6; Learning Objectives</h3>
 <p>By completing this activity, you will be able to:</p>
 <ul>
-    <li>Explain the <strong>purpose of hash tables</strong>: O(1) average-case insert, search, and delete via key-to-index mapping</li>
-    <li>Implement a <strong>custom hash function</strong> that converts string keys to integer indices using character values and modulo</li>
-    <li>Implement <strong>separate chaining (open hashing)</strong>: each bucket holds a linked list of key-value pairs</li>
-    <li>Implement <strong>linear probing (closed hashing)</strong>: collisions resolved by scanning to the next open slot</li>
-    <li>Explain why <strong>tombstone deletion</strong> is required for probing &mdash; removing a slot without marking it would break probe sequences</li>
-    <li>Calculate <strong>load factor</strong> (<code>size / capacity</code>) and trigger a <strong>resize + rehash</strong> when it exceeds a threshold</li>
+    <li>Explain how a hash function maps a <code>string</code> key to a bucket index, and why the modulo step is what keeps it in range</li>
+    <li>Implement the <strong>multiply-and-add</strong> hash and explain why resizing invalidates every index it produced</li>
+    <li>Resolve collisions with <strong>separate chaining</strong> &mdash; an array of linked lists, one chain per bucket</li>
+    <li>Write <code>insert</code> so that an existing key is <em>updated</em> rather than duplicated</li>
+    <li>Reuse the <strong>trailing-pointer pattern</strong> from CT 09 to unlink a node from the middle of a chain</li>
+    <li>Define <strong>load factor</strong> and explain why the table grows before it is full, not after</li>
+    <li>Explain why chaining is O(1) on average and O(n) in the worst case, and what makes the difference</li>
 </ul>
-</details>
+
+<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #d9edf7; border: 1px solid #bce8f1; color: #31708f;">
+    <strong>Your scorecard starts at 0, and that is correct.</strong> Every method in <code>ChainingHashTable.cpp</code> is a stub, so nothing passes on a fresh clone &mdash; including <code>hash()</code>, which returns 0 until you write it. Do not read the zero as a broken setup. The <strong>Checkpoint</strong> at the end of each part below tells you which tests should be green by then.
+</div>
+
+<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #dff0d8; border: 1px solid #d6e9c6; color: #3c763d;">
+    <strong>How you get your score:</strong> run <code>python3 tests/scorecard.py</code> from the top of your repository. It prints the same score you will be graded on, straight away and as often as you like. When it reads 30, push your work and upload a <strong>screenshot of the scorecard</strong> here in Canvas. Full details in <strong>Scoring &amp; Submitting</strong> near the bottom of this page.
+</div>
+
+<hr />
 
 <details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
 <summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F680; Getting Started</h3></summary>
 
-
-<h4>Step 1: Fork the Repository</h4>
-<p>Click the button below to fork the assignment repository to your GitHub account:</p>
-<p><a style="display: inline-block; padding: 10px 24px; font-size: 1em; font-weight: 600; color: #fff; background-color: #0b874b; border-radius: 4px; text-decoration: none;" href="https://hadzikcs.netlify.app/gh?course=sh/CS2420&task=ct11-chaining-hash-table" target="_blank" rel="noopener">Fork Repository on GitHub</a></p>
-
-<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #fcf8e3; border: 1px solid #faebcc; color: #8a6d3b;">
-    <strong>First time?</strong> You&#x2019;ll need a GitHub account. Sign in (or create one) before clicking the button above.
+<h4>1. Fork the repository</h4>
+<p><a style="display: inline-block; padding: 10px 24px; font-size: 1em; font-weight: 600; color: #fff; background-color: #0b874b; border-radius: 4px; text-decoration: none;" href="https://hadzikcs.netlify.app/gh?course=sh/CS2420&amp;task=ct11-chaining-hash-table" target="_blank" rel="noopener">Fork Repository on GitHub &#x1F517;</a></p>
+<blockquote>
+<p><strong>First time?</strong> You&#x2019;ll need a GitHub account. Sign in (or create one) before clicking the button.</p>
+</blockquote>
+<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #d9edf7; border: 1px solid #bce8f1; color: #31708f;">
+    <strong>Course passcode:</strong> <code>dog_pill</code> &#x2014; enter this when prompted by the fork tool. It also asks for your <strong>GitHub username</strong> (not your W number or email).
 </div>
+<blockquote>
+<p>Your new repo is <strong>private</strong>, so it will not appear until you accept the invitation &mdash; check your email or <a href="https://github.com/notifications" target="_blank" rel="noopener">GitHub notifications</a> right after you create it.</p>
+</blockquote>
 
-<h4>Step 2: Clone and open in the Dev Container</h4>
-<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">git clone https://github.com/YOUR-USERNAME/ct11-chaining-hash-table.git
-code ct11-chaining-hash-table</pre>
+<h4>2. Clone and open in the Dev Container</h4>
+<p>Copy the clone URL from your new repository&#x2019;s green <strong>Code</strong> button, then:</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">git clone https://github.com/Hadzik-CS2420/ct11-chaining-hash-table-YOUR-USERNAME.git
+code ct11-chaining-hash-table-YOUR-USERNAME</pre>
 <p>When VS Code prompts <strong>&#x201C;Reopen in Container&#x201D;</strong>, click it. Wait for the bottom-left corner to read <strong>Dev Container</strong>. The compiler, CMake and the test framework are already installed inside it &mdash; there is nothing to set up by hand.</p>
-<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #fcf8e3; border: 1px solid #faebcc; color: #8a6d3b;">
-    <strong>Docker Desktop must be running</strong> before you open the project. No prompt? Press <strong>Ctrl+Shift+P</strong> and run <strong>Dev Containers: Reopen in Container</strong>.
-</div>
-<h4>Step 3: Build and check your score</h4>
+<blockquote>
+<p><strong>Docker Desktop must be running</strong> before you open the project. No prompt? Press <strong>Ctrl+Shift+P</strong> and run <strong>Dev Containers: Reopen in Container</strong>.</p>
+</blockquote>
+
+<h4>3. Build</h4>
 <pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">cmake -B build
-cmake --build build
-python3 tests/scorecard.py</pre>
+cmake --build build</pre>
+<p><code>cmake -B build</code> is a one-time step &mdash; it creates the <code>build/</code> folder and downloads Google Test. After that, <code>cmake --build build</code> is all you need after each change.</p>
+
+<p><strong>Checkpoint:</strong> the build finishes and <code>python3 tests/scorecard.py</code> reads <strong>0/30</strong>. That is the correct starting point.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x25B6;&#xFE0F; Running Your Code</h3></summary>
+
+<h4>Your score</h4>
+<p>This is the command that tells you where you stand, without pushing anything:</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">python3 tests/scorecard.py</pre>
+<p>Run it from the top of your repository &mdash; the folder holding <code>CMakeLists.txt</code>, not from inside <code>tests/</code>. It builds if it needs to, runs every test, and prints a scored breakdown section by section.</p>
 <div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #dff0d8; border: 1px solid #d6e9c6; color: #3c763d;">
-    <strong>How you get your score:</strong> run <code>python3 tests/scorecard.py</code> from the top of your repository. It prints the same score the autograder awards, straight away and as often as you like. On a fresh clone almost every test fails &mdash; that is the starting line, not a problem. When it reads <strong>30</strong>, push your work and upload a <strong>screenshot of the scorecard</strong> here in Canvas. Do <em>not</em> submit a repository link.
+    <strong>It scores exactly the way the autograder does</strong> &mdash; same tests, same point values, read from the same table. The number it prints is the number you will be graded on, so there is nothing to guess at.
 </div>
-</details>
+<h4>The individual programs</h4>
+<p>Two executables come out of the build:</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">./build/ct10-chaining-hash-table   # the grade book demo
+./build/run_tests                  # the test suite</pre>
+<p>Run one section&#x2019;s tests at a time by filtering:</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">./build/run_tests --gtest_filter=HashFunction.*</pre>
 
-<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
-<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F4DD; What You&#x2019;ll Do</h3></summary>
-
-<p>Open each source file and complete the <code>TODO</code> comments. Each TODO tells you what to write, and the <strong>DISCUSSION</strong> comments explain the &#x201C;why&#x201D; behind the code. We&#x2019;ll work through these together in class.</p>
-</details>
-
-<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
-<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F4DA; Teaching Order</h3></summary>
-
-<p>Work through the files in the order <code>main.cpp</code> calls them:</p>
-
-<h4>1. <code>ChainingHashTable.cpp</code> &mdash; Separate chaining (8 TODOs) (8 TODOs)</h4>
 <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
     <thead>
         <tr>
-            <th style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">Section</th>
-            <th style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">What You&#x2019;ll Learn</th>
+            <th scope="col" style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">Filter</th>
+            <th scope="col" style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">Covers</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Constructor</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">allocate a <code>ChainNode**</code> array of size <code>capacity_</code>; initialize every bucket to <code>nullptr</code></td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Destructor</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">walk each bucket's chain deleting every node; same temp-pointer pattern as singly linked list</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">hash()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">iterate through each character of the key, accumulate using multiply-and-add (×31), return <code>total % capacity_</code>; discuss why prime capacities reduce clustering</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">insert()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">hash the key; walk the chain to check for duplicates (update value if found); otherwise prepend a new <code>ChainNode</code>; increment <code>size_</code>; check load factor and resize if needed</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">search()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">hash the key; walk the chain comparing keys; return pointer to value if found, <code>nullptr</code> otherwise</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">remove()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">hash the key; walk the chain with a trailing pointer; unlink and delete the matching node; decrement <code>size_</code></td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">load_factor() and resize()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>load_factor</code> returns <code>size_ / capacity_</code> as a double; <code>resize</code> picks a larger prime capacity, allocates a new bucket array, rehashes every entry from the old table, deletes old chains</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">print()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">loop through each bucket index; print the chain contents or "empty"</td>
-        </tr>
-    </tbody>
-</table>
-<h4>2. <code>ProbingHashTable.cpp</code> &mdash; Linear probing (9 TODOs) (9 TODOs)</h4>
-<table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
-    <thead>
-        <tr>
-            <th style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">Section</th>
-            <th style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">What You&#x2019;ll Learn</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Constructor</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">allocate <code>HashSlot</code> array; default initialization sets every slot to <code>EMPTY</code></td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">insert()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">hash the key; probe forward (<code>(index + 1) % capacity_</code>) until finding <code>EMPTY</code>, <code>DELETED</code>, or a matching key; insert or update; increment <code>size_</code>; resize before inserting if load factor would exceed threshold</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">search()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">hash the key; probe forward skipping <code>DELETED</code> slots; stop at <code>EMPTY</code> (key not found) or matching key</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">remove()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">search for the key; set its status to <code>DELETED</code> (tombstone); decrement <code>size_</code>; explain why you can't just mark it <code>EMPTY</code></td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">resize()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">allocate new <code>HashSlot</code> array with larger prime capacity; rehash only <code>OCCUPIED</code> entries (skip <code>DELETED</code>); replace old array</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Destructor</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>delete[]</code> the slot array (much simpler than chaining &mdash; no chains to walk)</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">hash()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">same multiply-and-add algorithm as ChainingHashTable</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">load_factor()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">same formula, but probing uses a lower threshold (0.75 vs 1.0)</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">print()</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">loop through each slot; print the entry, <code>[empty]</code>, or <code>[deleted]</code></td>
-        </tr>
-    </tbody>
-</table>
-<h4>3. <code>main.cpp</code> &mdash; Professor's Grade Book (8 TODOs) (8 TODOs)</h4>
-<table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
-    <thead>
-        <tr>
-            <th style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">Section</th>
-            <th style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">What You&#x2019;ll Learn</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 1 &mdash; Insert students</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">add 5 student names with grades into the chaining table</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 1 &mdash; Print</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">display the bucket layout; notice Alice and Diana collide at bucket 4</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 1 &mdash; Search</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">look up an existing student (Charlie) and a missing one (Frank)</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 1 &mdash; Update and remove</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">update Bob's grade via insert; remove Diana (dropped the class)</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 2 &mdash; Insert students</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">add the same 5 students into the probing table</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 2 &mdash; Print and search</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">display the slot layout; notice clustering at slots 4-6</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 2 &mdash; Tombstone demo</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">remove Diana (slot 5 → <code>[deleted]</code>), then search for Eve (probes past tombstone to slot 6)</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 2 &mdash; Resize demo</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">insert Frank and Grace to trigger resize; capacity jumps from 7 to 17, tombstones cleared</td>
-        </tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>HashFunction.*</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 2 &mdash; hash()</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>ChainingInsert.*</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 3 &mdash; insert()</td></tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>ChainingSearch.*</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 4 &mdash; search()</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>ChainingRemove.*</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 5 &mdash; remove()</td></tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>ChainingResize.*</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 6 &mdash; load_factor() and resize()</td></tr>
     </tbody>
 </table>
 </details>
 
 <details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
-<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F4CA; Grading (30 points)</h3></summary>
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">Part 1: The Constructor and Destructor</h3></summary>
 
-<p>Your code is auto-graded when you push. Tests check that each TODO produces the correct output.</p>
+<p>File: <code>src/ChainingHashTable.cpp</code> &mdash; <strong>TODO 1 and TODO 2</strong></p>
+<p>The table is an array of chain heads. <code>TODO 1</code> allocates that array with <code>capacity_</code> slots and zero-initializes it, so every bucket starts as <code>nullptr</code> &mdash; an empty chain.</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">buckets_ = new ChainNode*[capacity_]();   // the () zero-initializes</pre>
+<p>Without the <code>()</code> the pointers hold garbage, and the first thing that walks a chain will follow one of them and crash. The destructor is the mirror image and has to free in the right order: delete every node in every chain first, then <code>delete[] buckets_</code>. Free the array first and you have thrown away the only pointers to the nodes.</p>
+<p><strong>Checkpoint:</strong> nothing scores yet, but the program should build and run without crashing. Everything after this depends on both of these being right.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">Part 2: hash() &mdash; Turning a Key Into an Index</h3></summary>
+
+<p>File: <code>src/ChainingHashTable.cpp</code> &mdash; <strong>TODO 3</strong>, worth <strong>4 points</strong></p>
+<p>Two steps. Fold every character into a running total, then bring that total into range:</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">size_t hash_value = 0;
+for (char c : key) {
+    hash_value = hash_value * 31 + c;   // multiply-and-add
+}
+return hash_value % capacity_;          // land it in [0, capacity_)</pre>
+<p>The multiply by 31 is what makes position matter &mdash; without it <code>&quot;abc&quot;</code> and <code>&quot;cba&quot;</code> would hash identically. The modulo is what guarantees the result is a usable index.</p>
+<p>Note what this means for <code>resize()</code> later: the index depends on <code>capacity_</code>, so changing the capacity changes where every existing key belongs. That is why resizing has to rehash rather than copy.</p>
+<p><strong>Checkpoint:</strong> <code>HashFunction.ConsistentResults</code> and <code>HashFunction.WithinRange</code> pass &mdash; 4 points. They check that the same key always lands in the same bucket, that every index is in range, and that your keys do not all pile into one bucket.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">Part 3: insert() &mdash; Add, or Update in Place</h3></summary>
+
+<p>File: <code>src/ChainingHashTable.cpp</code> &mdash; <strong>TODO 4</strong>, worth <strong>8 points</strong></p>
+<p>This is the largest single block of points on the page, because it is two jobs in one. Hash the key, then walk that bucket&#x2019;s chain:</p>
+<ul>
+<li>If a node already holds this key, <strong>overwrite its value</strong> and stop. Do not add a second node &mdash; a grade book with Bob in it twice cannot answer what Bob&#x2019;s grade is.</li>
+<li>Otherwise build a new node and put it on the <strong>front</strong> of the chain, then increment <code>size_</code>.</li>
+</ul>
+<p>Prepending is O(1); appending would have to walk to the end first, and nothing about a chain cares which order it is in.</p>
+<p><strong>Checkpoint:</strong> all three <code>ChainingInsert</code> tests pass &mdash; 8 points. <code>HandlesCollisions</code> is the one that proves the chain works: it inserts two keys that hash to the same bucket and expects both to survive.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">Part 4: search() &mdash; Find a Value by Key</h3></summary>
+
+<p>File: <code>src/ChainingHashTable.cpp</code> &mdash; <strong>TODO 5</strong>, worth <strong>6 points</strong></p>
+<p>The same two-step shape as insert: hash to a bucket, walk its chain comparing keys. Return <code>&amp;current-&gt;value</code> on a match so the caller can read it, or <code>nullptr</code> if you reach the end of the chain.</p>
+<p>Returning the address rather than a copy is what lets <code>main.cpp</code> print a grade without the table handing out its internals &mdash; and it is why the method is <code>const</code>: it may read the table, never change it.</p>
+<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #fcf8e3; border: 1px solid #faebcc; color: #8a6d3b;">
+    <strong>Returning <code>nullptr</code> every time will not score.</strong> The tests check that a key you just inserted is found, not only that a missing key is not.
+</div>
+<p><strong>Checkpoint:</strong> all three <code>ChainingSearch</code> tests pass &mdash; 6 points.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">Part 5: remove() &mdash; Unlink a Node From a Chain</h3></summary>
+
+<p>File: <code>src/ChainingHashTable.cpp</code> &mdash; <strong>TODO 6</strong>, worth <strong>6 points</strong></p>
+<p>This is CT 09&#x2019;s trailing-pointer pattern again, applied one bucket at a time. A node does not know who points at it, so you carry a <code>previous</code> pointer one step behind <code>current</code>:</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">ChainNode* previous = nullptr;
+ChainNode* current  = buckets_[index];
+while (current) {
+    if (current-&gt;key == key) {
+        // previous == nullptr means this is the head of the chain
+        ...
+    }
+    previous = current;
+    current  = current-&gt;next;
+}</pre>
+<p>Two cases to get right. If <code>previous</code> is still <code>nullptr</code> the match is the head, so the bucket itself has to point past it. Otherwise <code>previous-&gt;next</code> skips the node. Either way: <code>delete</code> the node, decrement <code>size_</code>, and return <code>true</code>. A key that is not there returns <code>false</code> and changes nothing.</p>
+<p><strong>Checkpoint:</strong> all three <code>ChainingRemove</code> tests pass &mdash; 6 points, including removing from the middle of a collision chain.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">Part 6: load_factor() and resize() &mdash; Growing Before It Hurts</h3></summary>
+
+<p>File: <code>src/ChainingHashTable.cpp</code> &mdash; <strong>TODO 7 and TODO 8</strong>, worth <strong>6 points</strong></p>
+<p><code>load_factor()</code> is one line &mdash; entries divided by buckets &mdash; but cast before you divide or integer division gives you 0:</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">return static_cast&lt;double&gt;(size_) / capacity_;</pre>
+<p><code>resize()</code> is where the hash function&#x2019;s dependence on <code>capacity_</code> comes due. Every key&#x2019;s index is computed with the old capacity, so a bigger array means they all belong somewhere else. You cannot copy the buckets across &mdash; you have to <strong>rehash</strong> each entry into the new array.</p>
+<p>The table grows when the load factor crosses the threshold, not when it is full. Chains are still short at that point, which is exactly the moment the table is cheap to rebuild.</p>
+<p><strong>Checkpoint:</strong> both <code>ChainingResize</code> tests pass &mdash; 6 points. <code>AllEntriesSurvive</code> is the one that catches a rehash that dropped something.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">Part 7: print() and the Grade Book</h3></summary>
+
+<p>Files: <code>src/ChainingHashTable.cpp</code> (<strong>TODO 9</strong>) and <code>src/main.cpp</code> (<strong>4 TODOs</strong>) &mdash; not directly scored</p>
+<p><code>print()</code> walks every bucket from 0 to <code>capacity_ - 1</code> and shows its chain. No test scores it, but it is the fastest way to <em>see</em> a collision: insert the five students and look at which buckets ended up with two names.</p>
+<p><code>main.cpp</code> drives the demo in four steps &mdash; insert five grades, print the table and its load factor, search for a student who is there and one who is not, then update Bob and remove Diana. Working through it is how you confirm the table behaves the way the tests say it does.</p>
+<p><strong>Checkpoint:</strong> <code>python3 tests/scorecard.py</code> reads <strong>30</strong>.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F5BC;&#xFE0F; Diagrams</h3></summary>
+
+<p>Every diagram below is in the <code>images/</code> folder of your repository, and the source files point at them with <code>? SEE DIAGRAM:</code> comments right where they are relevant. Read them there &mdash; they are placed next to the code they explain.</p>
 <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
     <thead>
         <tr>
-            <th style="border: 1px solid #c7cdd1; padding: 10px 14px; background-color: #f5f5f5; font-weight: 700;">Category</th>
-            <th style="border: 1px solid #c7cdd1; padding: 10px 14px; background-color: #f5f5f5; font-weight: 700;">Points</th>
-            <th style="border: 1px solid #c7cdd1; padding: 10px 14px; background-color: #f5f5f5; font-weight: 700;">What is tested</th>
+            <th scope="col" style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">Diagram</th>
+            <th scope="col" style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">What it shows</th>
         </tr>
     </thead>
     <tbody>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>hash_table_overview.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">The whole structure at a glance &mdash; bucket array on the left, chains hanging off it</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>multiply_and_add.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Each character folded into the running hash, then the modulo that lands it in a bucket</td></tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>bucket_array_init.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">What the array looks like immediately after the constructor &mdash; every bucket <code>nullptr</code></td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>chain_node_structure.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">A single <code>ChainNode</code>: key, value, and the <code>next</code> pointer</td></tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>chaining_insert.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Insert when the bucket is empty versus insert when a chain is already there</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>chaining_prepend.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Why a new node goes on the front of the chain instead of the end</td></tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>chaining_search.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Walking a chain, comparing keys &mdash; found, and not found</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>chaining_remove_head.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Removing the first node in a chain, where there is no previous node</td></tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>chaining_remove_middle.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Removing from the middle with the trailing pointer</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>chaining_remove_notfound.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Reaching the end of a chain without a match</td></tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>load_factor_resize.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Load factor crossing the threshold, and the rehash that follows</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>prime_capacity.png</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Why the capacity is a prime number rather than a round one</td></tr>
+    </tbody>
+</table>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F4E4; Scoring &amp; Submitting (30 points)</h3></summary>
+
+<h4>Getting your score</h4>
+<p>Run this as often as you like &mdash; it does not push anything and it does not tell anyone you ran it:</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">python3 tests/scorecard.py</pre>
+<h4>Submitting</h4>
+<p>When the scorecard reads <strong>30</strong>, push your work:</p>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">git add -A
+git commit -m "Complete CT 11"
+git push</pre>
+<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #fcf8e3; border: 1px solid #faebcc; color: #8a6d3b;">
+    <strong>Upload a screenshot of the scorecard</strong> to this Canvas assignment &mdash; a PNG or JPG of the terminal showing your total. Do <em>not</em> submit a repository link.
+</div>
+<h4>How the 30 points break down</h4>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+    <thead>
         <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Build</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">2</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Project compiles without errors</td>
+            <th scope="col" style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">Section</th>
+            <th scope="col" style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">Test suite</th>
+            <th scope="col" style="border: 1px solid #c7cdd1; padding: 10px 14px; text-align: left; background-color: #f5f5f5; font-weight: 700;">Points</th>
         </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>hash()</code></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">3</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Consistent results, values within range</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Chaining <code>insert</code></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">3</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">New keys added, duplicates update value, handles collisions</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Chaining <code>search</code></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">3</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Finds existing keys, returns nullptr for missing</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Chaining <code>remove</code></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">3</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Removes from chain, handles missing key</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Chaining <code>resize</code></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">3</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Rehashes all entries into larger table</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Probing <code>insert</code></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">3</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Linear probing finds open slot, handles duplicates</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Probing <code>search</code></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">3</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Probes past tombstones, stops at empty</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Probing <code>remove</code></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">4</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Sets tombstone, doesn't break probe sequences</td>
-        </tr>
-        <tr style="background-color: #fafafa;">
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Probing <code>resize</code></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">3</td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Rehashes occupied slots, clears tombstones</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px; font-weight: 700; background-color: #f5f5f5;"><strong>Total</strong></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px; font-weight: 700; background-color: #f5f5f5;"><strong>30</strong></td>
-            <td style="border: 1px solid #c7cdd1; padding: 10px 14px; background-color: #f5f5f5;"></td>
-        </tr>
+    </thead>
+    <tbody>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 2 &mdash; <code>hash()</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>HashFunction</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">4</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 3 &mdash; <code>insert()</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>ChainingInsert</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">8</td></tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 4 &mdash; <code>search()</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>ChainingSearch</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">6</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 5 &mdash; <code>remove()</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>ChainingRemove</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">6</td></tr>
+        <tr><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">Part 6 &mdash; <code>resize()</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><code>ChainingResize</code></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;">6</td></tr>
+        <tr style="background-color: #fafafa;"><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><strong>Total</strong></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"></td><td style="border: 1px solid #c7cdd1; padding: 10px 14px;"><strong>30</strong></td></tr>
     </tbody>
 </table>
 </details>
 
 <details style="border: 1px solid #d7dae0; border-left: 4px solid #c0392b; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
-<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F527; Troubleshooting</h3></summary>
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F527; Common Problems</h3></summary>
 
-
-<h4>CMake does not configure automatically</h4>
-<ol>
-    <li>Check the bottom-left corner of VS Code reads <strong>Dev Container</strong>. If it does not, press <strong>Ctrl+Shift+P</strong> and run <strong>Dev Containers: Reopen in Container</strong></li>
-    <li>Make sure <strong>Docker Desktop</strong> is running, then reopen the folder</li>
-    <li>Delete the <code>build/</code> folder and run <code>cmake -B build</code> again</li>
-    <li>Verify that <code>CMakeLists.txt</code> is in the root of your cloned repository</li>
-</ol>
-
+<h4>The build fails, or CMake does not configure</h4>
+<p>Check the bottom-left corner of VS Code reads <strong>Dev Container</strong>. If it does not, press <strong>Ctrl+Shift+P</strong> and run <strong>Dev Containers: Reopen in Container</strong> &mdash; with Docker Desktop running. Still stuck? Delete the <code>build/</code> folder and run <code>cmake -B build</code> again.</p>
+<h4>Every key lands in bucket 0</h4>
+<p><code>hash()</code> is still returning the stub&#x2019;s <code>0</code>, or you did the modulo before the loop instead of after it. The multiply-and-add runs over the whole key first; <code>% capacity_</code> happens once, on the way out.</p>
+<h4>Inserting the same key twice gives two entries</h4>
+<p>The update case is missing. Before you prepend a new node, walk the chain and look for the key &mdash; if it is there, overwrite <code>value</code> and return without touching <code>size_</code>.</p>
+<h4>Crash the first time anything walks a chain</h4>
+<p>The bucket array was allocated without zero-initializing it, so the pointers are garbage rather than <code>nullptr</code>. The <code>()</code> at the end of <code>new ChainNode*[capacity_]()</code> is what makes every bucket an empty chain.</p>
+<h4>RemoveFromCollisionChain fails</h4>
+<p>Almost always the head case. When the node you are deleting is first in its chain, <code>previous</code> is still <code>nullptr</code> &mdash; the fix is to point <code>buckets_[index]</code> at <code>current-&gt;next</code>, not <code>previous-&gt;next</code>.</p>
+<h4>load_factor() always returns 0</h4>
+<p><code>size_ / capacity_</code> is integer division, so anything below 1.0 truncates to zero. Cast the numerator first.</p>
+<h4>AllEntriesSurvive fails after a resize</h4>
+<p>The old entries were copied into the new array at their old indices. They have to be re-hashed &mdash; the index depends on <code>capacity_</code>, and <code>capacity_</code> just changed.</p>
 <h4>Tests fail to build</h4>
-<ul>
-    <li>Google Test is fetched automatically via CMake&#x2019;s <code>FetchContent</code> &mdash; make sure you have an internet connection during the first build</li>
-    <li>Do <strong>not</strong> modify header files in the <code>include/</code> folder</li>
-</ul>
-
-<h4>Running the Program</h4>
-<ol>
-    <li>In the container terminal, run <code>./build/ct10-chaining-hash-table</code></li>
-    <li>Or press <strong>Ctrl+Shift+P</strong> and run <strong>CMake: Run Without Debugging</strong></li>
-    <li>You should see output from each section as you complete the TODOs</li>
-</ol>
-
-<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #dff0d8; border: 1px solid #d6e9c6; color: #3c763d;">
-    <strong>Tip:</strong> Look for the <code>// ! DISCUSSION:</code> comments in each file &mdash; these explain the &#x201C;why&#x201D; behind each concept. The <code>// ? SEE DIAGRAM:</code> comments point you to visual aids in the <code>images/</code> folder.
-</div>
+<p>The test file is not yours to edit &mdash; if it will not compile, a signature in <code>ChainingHashTable.cpp</code> no longer matches the header. Compare the method names, parameter types and <code>const</code> markers against <code>include/ChainingHashTable.h</code>.</p>
 </details>
-
