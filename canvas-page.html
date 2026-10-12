@@ -1,6 +1,6 @@
 <!-- Canvas LMS HTML Fragment — paste into the Rich Content Editor (HTML view) -->
 
-<h2>👨‍💻 Code-Together 10: Chaining Hash Table</h2>
+<h2>👨‍💻 Code-Together 11: Chaining Hash Tables</h2>
 
 <h3>&#x1F3AF; Overview</h3>
 <p>An in-class code-together activity introducing hash tables &mdash; the first data structure that maps <strong>keys to values</strong> using a hash function. In Part 1, students build a <strong>ChainingHashTable</strong> that resolves collisions by storing linked-list chains at each bucket. In Part 2, students build a <strong>ProbingHashTable</strong> that resolves collisions by scanning forward (linear probing) and uses tombstone deletion. Both parts cover load factor monitoring and resizing with rehashing. The scenario follows a professor's grade book: student names are keys, integer grades are values.</p>
@@ -26,23 +26,20 @@
     <strong>First time?</strong> You&#x2019;ll need a GitHub account. Sign in (or create one) before clicking the button above.
 </div>
 
-<h4>Step 2: Clone in Visual Studio</h4>
-<ol>
-    <li>Open <strong>Visual Studio</strong></li>
-    <li>On the start window, click <strong>&#x201C;Clone a repository&#x201D;</strong></li>
-    <li>Paste your repository URL (from GitHub) into the <strong>Repository location</strong> field</li>
-    <li>Choose a local path and click <strong>Clone</strong></li>
-    <li>Visual Studio should automatically detect the CMake project and configure it</li>
-</ol>
-
-<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #d9edf7; border: 1px solid #bce8f1; color: #31708f;">
-    Follow the <strong>Troubleshooting</strong> section at the bottom if CMake does not configure automatically.
+<h4>Step 2: Clone and open in the Dev Container</h4>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">git clone https://github.com/YOUR-USERNAME/ct11-chaining-hash-table.git
+code ct11-chaining-hash-table</pre>
+<p>When VS Code prompts <strong>&#x201C;Reopen in Container&#x201D;</strong>, click it. Wait for the bottom-left corner to read <strong>Dev Container</strong>. The compiler, CMake and the test framework are already installed inside it &mdash; there is nothing to set up by hand.</p>
+<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #fcf8e3; border: 1px solid #faebcc; color: #8a6d3b;">
+    <strong>Docker Desktop must be running</strong> before you open the project. No prompt? Press <strong>Ctrl+Shift+P</strong> and run <strong>Dev Containers: Reopen in Container</strong>.
 </div>
-
-<h4>Step 3: Wait for CMake Configuration</h4>
-<p>Visual Studio will automatically run CMake. Watch the <strong>Output</strong> window (<em>View &rarr; Output</em>, select <em>&#x201C;Show output from: CMake&#x201D;</em>) until you see:</p>
-<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 16px 20px; border-radius: 4px; overflow-x: auto; font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace; font-size: 0.875em; line-height: 1.6;">CMake generation finished.</pre>
-
+<h4>Step 3: Build and check your score</h4>
+<pre style="background-color: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 4px; overflow-x: auto; font-family: Consolas, 'Courier New', monospace; font-size: 0.875em; line-height: 1.6; margin: 8px 0;">cmake -B build
+cmake --build build
+python3 tests/scorecard.py</pre>
+<div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #dff0d8; border: 1px solid #d6e9c6; color: #3c763d;">
+    <strong>How you get your score:</strong> run <code>python3 tests/scorecard.py</code> from the top of your repository. It prints the same score the autograder awards, straight away and as often as you like. On a fresh clone almost every test fails &mdash; that is the starting line, not a problem. When it reads <strong>30</strong>, push your work and upload a <strong>screenshot of the scorecard</strong> here in Canvas. Do <em>not</em> submit a repository link.
+</div>
 <h3>&#x1F4DD; What You&#x2019;ll Do</h3>
 <p>Open each source file and complete the <code>TODO</code> comments. Each TODO tells you what to write, and the <strong>DISCUSSION</strong> comments explain the &#x201C;why&#x201D; behind the code. We&#x2019;ll work through these together in class.</p>
 
@@ -255,9 +252,9 @@
 
 <h4>CMake does not configure automatically</h4>
 <ol>
-    <li>Make sure you have <strong>Desktop development with C++</strong> workload installed in Visual Studio</li>
-    <li>Go to <em>Project &rarr; CMake Settings</em> and ensure the configuration is correct</li>
-    <li>Try <em>Project &rarr; Delete Cache and Reconfigure</em></li>
+    <li>Check the bottom-left corner of VS Code reads <strong>Dev Container</strong>. If it does not, press <strong>Ctrl+Shift+P</strong> and run <strong>Dev Containers: Reopen in Container</strong></li>
+    <li>Make sure <strong>Docker Desktop</strong> is running, then reopen the folder</li>
+    <li>Delete the <code>build/</code> folder and run <code>cmake -B build</code> again</li>
     <li>Verify that <code>CMakeLists.txt</code> is in the root of your cloned repository</li>
 </ol>
 
@@ -269,8 +266,8 @@
 
 <h4>Running the Program</h4>
 <ol>
-    <li>In Visual Studio, select <code>ct10-hash-tables.exe</code> as the startup item from the dropdown</li>
-    <li>Press <strong>Ctrl+F5</strong> to run without debugging</li>
+    <li>In the container terminal, run <code>./build/ct10-chaining-hash-table</code></li>
+    <li>Or press <strong>Ctrl+Shift+P</strong> and run <strong>CMake: Run Without Debugging</strong></li>
     <li>You should see output from each section as you complete the TODOs</li>
 </ol>
 
