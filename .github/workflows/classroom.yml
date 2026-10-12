@@ -1,6 +1,6 @@
 name: Autograding Tests
 on:
-  - push
+  - workflow_dispatch
   - repository_dispatch
 permissions:
   checks: write
@@ -22,11 +22,11 @@ jobs:
         cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
         cmake --build build --config Release
 
-    - name: Build Check (2 points)
+    - name: Build Check (0 points)
       id: build
       uses: classroom-resources/autograding-command-grader@v1
       with:
-        test-name: Build Check (2 points)
+        test-name: Build Check (0 points)
         setup-command: ''
         command: |
           if [ -f build/run_tests ]; then
@@ -35,7 +35,7 @@ jobs:
             echo "Build failed" && exit 1
           fi
         timeout: 10
-        max-score: 2
+        max-score: 0
 
     # ==================== Hash Function Tests (4 points) ====================
 
@@ -84,7 +84,7 @@ jobs:
             exit 1
           fi
         timeout: 10
-        max-score: 2
+        max-score: 3
 
     - name: Insert Update Existing Key (2 points)
       id: insert-update
@@ -114,7 +114,7 @@ jobs:
             exit 1
           fi
         timeout: 10
-        max-score: 2
+        max-score: 3
 
     # ==================== Search Tests (6 points) ====================
 

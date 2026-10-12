@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 345">
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: bold; fill: #1a1a1a; }
+    .subtitle { font-size: 13px; fill: #555; }
+    .bucket-idx { font-size: 12px; font-weight: bold; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .value { font-size: 11px; font-weight: bold; fill: #fff; }
+    .value-lg { font-size: 12px; font-weight: bold; fill: #fff; }
+    .empty-label { font-size: 11px; fill: #999; font-style: italic; }
+    .label { font-size: 12px; fill: #333; }
+    .label-bold { font-size: 12px; font-weight: bold; fill: #333; }
+    .code { font-size: 11px; fill: #2c3e50; font-family: 'Consolas', monospace; }
+    .note { font-size: 11px; fill: #777; font-style: italic; }
+    .hash-note { font-size: 11px; fill: #8e44ad; font-family: 'Consolas', monospace; }
+    .step-num { font-size: 14px; font-weight: bold; fill: #fff; }
+    .not-found { font-size: 12px; font-weight: bold; fill: #c0392b; }
+  </style>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#e74c3c"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bdc3c7"/>
+    </marker>
+  </defs>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="580" height="52" fill="#eaf2f8"/>
+  <text x="290" y="22" text-anchor="middle" class="title">remove() &#x2014; Case 3: Key NOT FOUND</text>
+  <text x="290" y="42" text-anchor="middle" class="subtitle">Walk the entire chain without finding a match &#x2014; return false</text>
+
+  <text x="30" y="76" class="code">remove("Nick")</text>
+  <text x="175" y="76" class="hash-note">hash("Nick") % 7 = 4</text>
+
+  <!-- Step 1 -->
+  <circle cx="42" cy="102" r="11" fill="#2980b9"/>
+  <text x="42" y="107" text-anchor="middle" class="step-num">1</text>
+  <text x="61" y="107" class="code">size_t index = hash(key);</text>
+  <text x="280" y="107" class="note">&#x2192; index = 4</text>
+
+  <!-- Step 2 -->
+  <circle cx="42" cy="132" r="11" fill="#2980b9"/>
+  <text x="42" y="137" text-anchor="middle" class="step-num">2</text>
+  <text x="61" y="133" class="code">ChainNode* current = buckets_[index];</text>
+  <text x="61" y="147" class="code">ChainNode* prev = nullptr;</text>
+
+  <!-- Chain: [4] → Diana → Alice → nullptr (all faded — checked, no match) -->
+  <text x="37" y="180" class="bucket-idx">[4]</text>
+  <rect x="57" y="165" width="55" height="25" rx="3" fill="#7f8c8d" stroke="#636e72" stroke-width="1.5"/>
+  <text x="84" y="182" text-anchor="middle" class="value">&#x2192;</text>
+  <line x1="112" y1="177" x2="142" y2="177" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Diana (faded) -->
+  <rect x="145" y="165" width="60" height="25" rx="3" fill="#3498db" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <rect x="205" y="165" width="28" height="25" rx="3" fill="#2ecc71" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <text x="175" y="182" text-anchor="middle" class="value" opacity="0.4">Diana</text>
+  <text x="219" y="182" text-anchor="middle" class="value-lg" opacity="0.4">78</text>
+  <line x1="233" y1="177" x2="263" y2="177" stroke="#e74c3c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Alice (faded) -->
+  <rect x="266" y="165" width="60" height="25" rx="3" fill="#3498db" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <rect x="326" y="165" width="28" height="25" rx="3" fill="#2ecc71" stroke="#bdc3c7" stroke-width="1.5" opacity="0.4"/>
+  <text x="296" y="182" text-anchor="middle" class="value" opacity="0.4">Alice</text>
+  <text x="340" y="182" text-anchor="middle" class="value-lg" opacity="0.4">95</text>
+  <line x1="354" y1="177" x2="384" y2="177" stroke="#bdc3c7" stroke-width="1.5" marker-end="url(#arr-g)"/>
+  <text x="393" y="182" class="empty-label">nullptr</text>
+
+  <text x="61" y="208" class="note">"Diana" != "Nick" &#x2192; advance</text>
+  <text x="61" y="224" class="note">"Alice" != "Nick" &#x2192; advance</text>
+  <text x="61" y="240" class="note">current == nullptr &#x2192; loop ends, key not in chain</text>
+
+  <!-- Step 3 -->
+  <circle cx="42" cy="270" r="11" fill="#c0392b"/>
+  <text x="42" y="275" text-anchor="middle" class="step-num">3</text>
+  <text x="61" y="275" class="not-found">Key not found &#x2014; return false</text>
+
+  <rect x="28" y="288" width="250" height="18" rx="3" fill="#fdedec"/>
+  <text x="32" y="302" class="code">return false;   // nothing to remove</text>
+
+  <!-- Footer -->
+  <rect x="0" y="320" width="580" height="20" fill="#f4f6f7"/>
+  <text x="290" y="335" text-anchor="middle" class="note">No nodes deleted, size_ unchanged &#x2014; the table is not modified</text>
+</svg>

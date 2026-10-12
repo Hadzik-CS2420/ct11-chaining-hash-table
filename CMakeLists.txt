@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.24)
 project(ct10-chaining-hash-table LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
+
+# Write build/compile_commands.json so C++ IntelliSense knows the real
+# include paths and flags instead of guessing at them. The devcontainer
+# points C_Cpp.default.compileCommands straight at this file.
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
