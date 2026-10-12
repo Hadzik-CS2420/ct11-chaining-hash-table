@@ -2,10 +2,15 @@
 
 <h2>👨‍💻 Code-Together 11: Chaining Hash Tables</h2>
 
-<h3>&#x1F3AF; Overview</h3>
-<p>An in-class code-together activity introducing hash tables &mdash; the first data structure that maps <strong>keys to values</strong> using a hash function. In Part 1, students build a <strong>ChainingHashTable</strong> that resolves collisions by storing linked-list chains at each bucket. In Part 2, students build a <strong>ProbingHashTable</strong> that resolves collisions by scanning forward (linear probing) and uses tombstone deletion. Both parts cover load factor monitoring and resizing with rehashing. The scenario follows a professor's grade book: student names are keys, integer grades are values.</p>
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F3AF; Overview</h3></summary>
 
-<h3>&#x1F4D6; Learning Objectives</h3>
+<p>An in-class code-together activity introducing hash tables &mdash; the first data structure that maps <strong>keys to values</strong> using a hash function. In Part 1, students build a <strong>ChainingHashTable</strong> that resolves collisions by storing linked-list chains at each bucket. In Part 2, students build a <strong>ProbingHashTable</strong> that resolves collisions by scanning forward (linear probing) and uses tombstone deletion. Both parts cover load factor monitoring and resizing with rehashing. The scenario follows a professor's grade book: student names are keys, integer grades are values.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F4D6; Learning Objectives</h3></summary>
+
 <p>By completing this activity, you will be able to:</p>
 <ul>
     <li>Explain the <strong>purpose of hash tables</strong>: O(1) average-case insert, search, and delete via key-to-index mapping</li>
@@ -15,8 +20,11 @@
     <li>Explain why <strong>tombstone deletion</strong> is required for probing &mdash; removing a slot without marking it would break probe sequences</li>
     <li>Calculate <strong>load factor</strong> (<code>size / capacity</code>) and trigger a <strong>resize + rehash</strong> when it exceeds a threshold</li>
 </ul>
+</details>
 
-<h3>&#x1F680; Getting Started</h3>
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F680; Getting Started</h3></summary>
+
 
 <h4>Step 1: Fork the Repository</h4>
 <p>Click the button below to fork the assignment repository to your GitHub account:</p>
@@ -40,10 +48,17 @@ python3 tests/scorecard.py</pre>
 <div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #dff0d8; border: 1px solid #d6e9c6; color: #3c763d;">
     <strong>How you get your score:</strong> run <code>python3 tests/scorecard.py</code> from the top of your repository. It prints the same score the autograder awards, straight away and as often as you like. On a fresh clone almost every test fails &mdash; that is the starting line, not a problem. When it reads <strong>30</strong>, push your work and upload a <strong>screenshot of the scorecard</strong> here in Canvas. Do <em>not</em> submit a repository link.
 </div>
-<h3>&#x1F4DD; What You&#x2019;ll Do</h3>
-<p>Open each source file and complete the <code>TODO</code> comments. Each TODO tells you what to write, and the <strong>DISCUSSION</strong> comments explain the &#x201C;why&#x201D; behind the code. We&#x2019;ll work through these together in class.</p>
+</details>
 
-<h3>&#x1F4DA; Teaching Order</h3>
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F4DD; What You&#x2019;ll Do</h3></summary>
+
+<p>Open each source file and complete the <code>TODO</code> comments. Each TODO tells you what to write, and the <strong>DISCUSSION</strong> comments explain the &#x201C;why&#x201D; behind the code. We&#x2019;ll work through these together in class.</p>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F4DA; Teaching Order</h3></summary>
+
 <p>Work through the files in the order <code>main.cpp</code> calls them:</p>
 
 <h4>1. <code>ChainingHashTable.cpp</code> &mdash; Separate chaining (8 TODOs) (8 TODOs)</h4>
@@ -179,7 +194,11 @@ python3 tests/scorecard.py</pre>
         </tr>
     </tbody>
 </table>
-<h3>&#x1F4CA; Grading (30 points)</h3>
+</details>
+
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #1c7e45; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F4CA; Grading (30 points)</h3></summary>
+
 <p>Your code is auto-graded when you push. Tests check that each TODO produces the correct output.</p>
 <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
     <thead>
@@ -247,8 +266,11 @@ python3 tests/scorecard.py</pre>
         </tr>
     </tbody>
 </table>
+</details>
 
-<h3>&#x1F527; Troubleshooting</h3>
+<details style="border: 1px solid #d7dae0; border-left: 4px solid #c0392b; border-radius: 8px; padding: .5rem 1rem; margin: .6rem 0; background: #fcfcfd;">
+<summary style="cursor: pointer; list-style: none;"><h3 style="display: inline-block; margin: .25rem 0; font-size: 1.2rem; vertical-align: middle;">&#x1F527; Troubleshooting</h3></summary>
+
 
 <h4>CMake does not configure automatically</h4>
 <ol>
@@ -274,3 +296,5 @@ python3 tests/scorecard.py</pre>
 <div style="padding: 14px 18px; border-radius: 4px; margin-bottom: 16px; background-color: #dff0d8; border: 1px solid #d6e9c6; color: #3c763d;">
     <strong>Tip:</strong> Look for the <code>// ! DISCUSSION:</code> comments in each file &mdash; these explain the &#x201C;why&#x201D; behind each concept. The <code>// ? SEE DIAGRAM:</code> comments point you to visual aids in the <code>images/</code> folder.
 </div>
+</details>
+
