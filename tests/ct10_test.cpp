@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <set>
 #include "ChainingHashTable.h"
 
 // =============================================================================
@@ -10,17 +11,26 @@ TEST(HashFunction, ConsistentResults) {
     size_t h1 = table.hash("Alice");
     size_t h2 = table.hash("Alice");
     EXPECT_EQ(h1, h2) << "Same key must always produce the same hash";
+    // A hash that returns a constant is "consistent" too, so rule that out:
+    // ten keys over seven buckets must land on more than one of them.
+    EXPECT_NE(table.hash("Alice"), table.hash("Eve"))
+        << "hash() appears to return the same value for every key";
 }
 
 TEST(HashFunction, WithinRange) {
     ChainingHashTable table;   // capacity = 7
     std::string keys[] = {"Alice", "Bob", "Charlie", "Diana", "Eve",
                           "Frank", "Grace", "Hank", "Ivy", "Jack"};
+    std::set<size_t> seen;
     for (const auto& key : keys) {
         size_t h = table.hash(key);
         EXPECT_GE(h, 0u);
         EXPECT_LT(h, 7u) << "Hash of \"" << key << "\" out of range";
+        seen.insert(h);
     }
+    // Returning 0 for everything is "in range" as well -- it must spread.
+    EXPECT_GT(seen.size(), 1u)
+        << "hash() put all ten keys in the same bucket";
 }
 
 // =============================================================================
@@ -87,6 +97,7 @@ TEST(ChainingSearch, ReturnsNullForMissing) {
     ChainingHashTable table;
     table.insert("Alice", 95);
 
+    EXPECT_NE(table.search("Alice"), nullptr) << "a key that was inserted must be found";
     EXPECT_EQ(table.search("Frank"), nullptr);
     EXPECT_EQ(table.search(""), nullptr);
 }
@@ -94,6 +105,11 @@ TEST(ChainingSearch, ReturnsNullForMissing) {
 TEST(ChainingSearch, EmptyTable) {
     ChainingHashTable table;
     EXPECT_EQ(table.search("Alice"), nullptr);
+
+    // Returning nullptr always would pass the line above, so the same table
+    // has to start finding the key once it is actually in there.
+    table.insert("Alice", 95);
+    EXPECT_NE(table.search("Alice"), nullptr);
 }
 
 // =============================================================================
